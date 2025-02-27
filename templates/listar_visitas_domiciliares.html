@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Lista de Visitas Domiciliares</h1>
+        <a href="{{ url_for('visita_domiciliar') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nova Visita
+        </a>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('listar_visitas_domiciliares') }}" class="row g-3">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="buscar" placeholder="Buscar por nome ou CNS/CPF" 
+                               value="{{ buscar }}">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <select class="form-select" name="microarea">
+                        <option value="">Todas as Microáreas</option>
+                        {% for microarea in microareas %}
+                        <option value="{{ microarea }}" {% if microarea == microarea_seleccionada %}selected{% endif %}>
+                            Microárea {{ microarea }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="fecha_inicio" placeholder="Data Início"
+                           value="{{ fecha_inicio }}">
+                </div>
+                <div class="col-md-2">
+                    <input type="date" class="form-control" name="fecha_fin" placeholder="Data Fim"
+                           value="{{ fecha_fin }}">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-funnel"></i> Filtrar
+                    </button>
+                    <a href="{{ url_for('listar_visitas_domiciliares') }}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Limpar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if visitas.items %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                            <a href="{{ url_for('listar_visitas_domiciliares', 
+                                               ordenar='fecha_registro',
+                                               direccion='asc' if request.args.get('ordenar') != 'fecha_registro' or request.args.get('direccion') == 'desc' else 'desc',
+                                               **request.args) }}" class="text-decoration-none text-dark">
+                                Data
+                                {% if request.args.get('ordenar') == 'fecha_registro' %}
+                                    <i class="bi bi-arrow-{{ 'up' if request.args.get('direccion') == 'asc' else 'down' }}"></i>
+                                {% endif %}
+                            </a>
+                        </th>
+                        <th>Turno</th>
+                        <th>Cidadão</th>
+                        <th>Microárea</th>
+                        <th>Resultado</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visita in visitas.items %}
+                    <tr>
+                        <td>{{ visita.fecha_registro.strftime('%d/%m/%Y') }}</td>
+                        <td>
+                            {% if visita.turno == 'M' %}
+                                <span class="badge bg-warning">Manhã</span>
+                            {% elif visita.turno == 'T' %}
+                                <span class="badge bg-info">Tarde</span>
+                            {% else %}
+                                <span class="badge bg-dark">Noite</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if visita.ciudadano %}
+                                <div>{{ visita.ciudadano.nombre_completo }}</div>
+                                <small class="text-muted">{{ visita.ciudadano.cns_cpf }}</small>
+                            {% else %}
+                                <span class="text-muted">Não especificado</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ visita.microarea }}</td>
+                        <td>
+                            {% if visita.resultado_visita == '01' %}
+                                <span class="badge bg-success">Realizada</span>
+                            {% elif visita.resultado_visita == '02' %}
+                                <span class="badge bg-warning">Recusada</span>
+                            {% else %}
+                                <span class="badge bg-danger">Ausente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('ver_visita_domiciliar', id=visita.id) }}" 
+                                   class="btn btn-sm btn-info" title="Ver detalhes">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a href="{{ url_for('visita_domiciliar', id=visita.id) }}" 
+                                   class="btn btn-sm btn-warning" title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-danger" title="Excluir"
+                                        onclick="confirmarExclusao({{ visita.id }})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginação -->
+        <nav aria-label="Navegação de páginas">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {{ 'disabled' if not visitas.has_prev }}">
+                    <a class="page-link" href="{{ url_for('listar_visitas_domiciliares', pagina=visitas.prev_num, **request.args) if visitas.has_prev else '#' }}">
+                        Anterior
+                    </a>
+                </li>
+                {% for num in visitas.iter_pages(left_edge=2, left_current=2, right_current=3, right_edge=2) %}
+                    {% if num %}
+                        <li class="page-item {{ 'active' if num == visitas.page }}">
+                            <a class="page-link" href="{{ url_for('listar_visitas_domiciliares', pagina=num, **request.args) }}">
+                                {{ num }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                <li class="page-item {{ 'disabled' if not visitas.has_next }}">
+                    <a class="page-link" href="{{ url_for('listar_visitas_domiciliares', pagina=visitas.next_num, **request.args) if visitas.has_next else '#' }}">
+                        Próxima
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% else %}
+        <div class="alert alert-info">
+            Não há visitas registradas que correspondam aos critérios de busca.
+        </div>
+    {% endif %}
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="modalExcluir" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza que deseja excluir esta visita? Esta ação não pode ser desfeita.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="formExcluir" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmarExclusao(id) {
+    const modal = new bootstrap.Modal(document.getElementById('modalExcluir'));
+    const form = document.getElementById('formExcluir');
+    form.action = `/excluir_visita_domiciliar/${id}`;
+    modal.show();
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Editar Actividad Colectiva</h2>
+            <a href="{{ url_for('listar_actividades_colectivas') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+        
+        <form method="POST" class="needs-validation" novalidate>
+            <!-- Reutilizar el mismo formulario que actividad_colectiva.html -->
+            {% include 'includes/_form_actividad_colectiva.html' %}
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <a href="{{ url_for('listar_actividades_colectivas') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Validación del formulario
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Pre-poblar campos condicionales
+document.addEventListener('DOMContentLoaded', function() {
+    // Tipo de actividad
+    const tipoActividad = document.getElementsByName('tipo_actividad')
+    const otroTipoDiv = document.getElementById('otro_tipo_div')
+    tipoActividad.forEach(function(radio) {
+        if (radio.checked && radio.value === '07') {
+            otroTipoDiv.style.display = 'block'
+        }
+    })
+
+    // Público objetivo otros
+    const publicoOtros = document.getElementById('publico_otros')
+    const otroPublicoDiv = document.getElementById('otro_publico_div')
+    if (publicoOtros.checked) {
+        otroPublicoDiv.style.display = 'block'
+    }
+})
+
+// Mostrar/ocultar campos condicionales
+document.addEventListener('DOMContentLoaded', function() {
+    // Tipo de actividad
+    const tipoActividad = document.getElementsByName('tipo_actividad')
+    const otroTipoDiv = document.getElementById('otro_tipo_div')
+    tipoActividad.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            otroTipoDiv.style.display = this.value === '07' ? 'block' : 'none'
+        })
+    })
+
+    // Público objetivo otros
+    const publicoOtros = document.getElementById('publico_otros')
+    const otroPublicoDiv = document.getElementById('otro_publico_div')
+    publicoOtros.addEventListener('change', function() {
+        otroPublicoDiv.style.display = this.checked ? 'block' : 'none'
+    })
+})
+</script>
+{% endblock %} 

@@ -1,0 +1,726 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">{{ 'Editar' if cadastro else 'Novo' }} Cadastro Individual</h2>
+        <form method="POST" class="needs-validation" novalidate>
+            <!-- Seção 1: Identificação do Cidadão -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>1. Identificação do Cidadão</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cns_cpf" class="form-label">CNS ou CPF do Cidadão *</label>
+                            <input type="text" class="form-control" id="cns_cpf" name="cns_cpf" 
+                                   value="{{ cadastro.cns_cpf if cadastro else '' }}" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre_completo" class="form-label">Nome Completo *</label>
+                            <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" 
+                                   value="{{ cadastro.nombre_completo if cadastro else '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre_social" class="form-label">Nome Social</label>
+                            <input type="text" class="form-control" id="nombre_social" name="nombre_social"
+                                   value="{{ cadastro.nombre_social if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_nacimiento" class="form-label">Data de Nascimento *</label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                                   value="{{ cadastro.fecha_nacimiento.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_nacimiento else '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="sexo" class="form-label">Sexo *</label>
+                            <select class="form-select" id="sexo" name="sexo" required>
+                                <option value="">Selecione...</option>
+                                <option value="M" {{ 'selected' if cadastro and cadastro.sexo == 'M' else '' }}>Masculino</option>
+                                <option value="F" {{ 'selected' if cadastro and cadastro.sexo == 'F' else '' }}>Feminino</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="raza_color" class="form-label">Raça/Cor *</label>
+                            <select class="form-select" id="raza_color" name="raza_color" required>
+                                <option value="">Selecione...</option>
+                                <option value="Branca" {{ 'selected' if cadastro and cadastro.raza_color == 'Branca' else '' }}>Branca</option>
+                                <option value="Preta" {{ 'selected' if cadastro and cadastro.raza_color == 'Preta' else '' }}>Preta</option>
+                                <option value="Parda" {{ 'selected' if cadastro and cadastro.raza_color == 'Parda' else '' }}>Parda</option>
+                                <option value="Amarela" {{ 'selected' if cadastro and cadastro.raza_color == 'Amarela' else '' }}>Amarela</option>
+                                <option value="Indígena" {{ 'selected' if cadastro and cadastro.raza_color == 'Indígena' else '' }}>Indígena</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="etnia" class="form-label">Etnia</label>
+                            <input type="text" class="form-control" id="etnia" name="etnia"
+                                   value="{{ cadastro.etnia if cadastro else '' }}">
+                            <small class="form-text text-muted">Especificar se indígena</small>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nis_pis_pasep" class="form-label">Número NIS (PIS/PASEP)</label>
+                            <input type="text" class="form-control" id="nis_pis_pasep" name="nis_pis_pasep"
+                                   value="{{ cadastro.nis_pis_pasep if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre_madre" class="form-label">Nome Completo da Mãe *</label>
+                            <input type="text" class="form-control" id="nombre_madre" name="nombre_madre" 
+                                   value="{{ cadastro.nombre_madre if cadastro else '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre_padre" class="form-label">Nome Completo do Pai</label>
+                            <input type="text" class="form-control" id="nombre_padre" name="nombre_padre"
+                                   value="{{ cadastro.nombre_padre if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nacionalidad" class="form-label">Nacionalidade</label>
+                            <select class="form-select" id="nacionalidad" name="nacionalidad">
+                                <option value="">Selecione...</option>
+                                <option value="Brasileira" {{ 'selected' if cadastro and cadastro.nacionalidad == 'Brasileira' else '' }}>Brasileira</option>
+                                <option value="Naturalizado" {{ 'selected' if cadastro and cadastro.nacionalidad == 'Naturalizado' else '' }}>Naturalizado</option>
+                                <option value="Estrangeiro" {{ 'selected' if cadastro and cadastro.nacionalidad == 'Estrangeiro' else '' }}>Estrangeiro</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="pais_nacimiento" class="form-label">País de Nascimento</label>
+                            <input type="text" class="form-control" id="pais_nacimiento" name="pais_nacimiento"
+                                   value="{{ cadastro.pais_nacimiento if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_naturalizacion" class="form-label">Data de Naturalização</label>
+                            <input type="date" class="form-control" id="fecha_naturalizacion" name="fecha_naturalizacion"
+                                   value="{{ cadastro.fecha_naturalizacion.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_naturalizacion else '' }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="portaria_naturalizacion" class="form-label">Portaria de Naturalização</label>
+                            <input type="text" class="form-control" id="portaria_naturalizacion" name="portaria_naturalizacion"
+                                   value="{{ cadastro.portaria_naturalizacion if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_entrada_brasil" class="form-label">Data de Entrada para o Brasil</label>
+                            <input type="date" class="form-control" id="fecha_entrada_brasil" name="fecha_entrada_brasil"
+                                   value="{{ cadastro.fecha_entrada_brasil.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_entrada_brasil else '' }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="municipio_nacimiento" class="form-label">Município de Nascimento</label>
+                            <input type="text" class="form-control" id="municipio_nacimiento" name="municipio_nacimiento"
+                                   value="{{ cadastro.municipio_nacimiento if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="estado_nacimiento" class="form-label">Estado de Nascimento</label>
+                            <input type="text" class="form-control" id="estado_nacimiento" name="estado_nacimiento"
+                                   value="{{ cadastro.estado_nacimiento if cadastro else '' }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono"
+                                   value="{{ cadastro.telefono if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email"
+                                   value="{{ cadastro.email if cadastro else '' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 2: Informação do Responsável Familiar -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>2. Informação do Responsável Familiar</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="es_responsable_familiar" 
+                                       name="es_responsable_familiar" {{ 'checked' if cadastro and cadastro.es_responsable_familiar else '' }}>
+                                <label class="form-check-label" for="es_responsable_familiar">
+                                    O Cidadão é o Responsável Familiar?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="responsable_familiar_cns_cpf" class="form-label">CNS ou CPF do Responsável Familiar</label>
+                            <input type="text" class="form-control" id="responsable_familiar_cns_cpf" name="responsable_familiar_cns_cpf"
+                                   value="{{ cadastro.responsable_familiar_cns_cpf if cadastro else '' }}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="microarea" class="form-label">Microárea</label>
+                            <input type="text" class="form-control" id="microarea" name="microarea"
+                                   value="{{ cadastro.microarea if cadastro else '' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 3: Informação Sociodemográfica -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>3. Informação Sociodemográfica</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="parentesco" class="form-label">Relação de Parentesco</label>
+                            <select class="form-select" id="parentesco" name="parentesco">
+                                <option value="">Selecione...</option>
+                                <option value="Cônjuge" {{ 'selected' if cadastro and cadastro.parentesco == 'Cônjuge' else '' }}>Cônjuge/Companheiro(a)</option>
+                                <option value="Filho" {{ 'selected' if cadastro and cadastro.parentesco == 'Filho' else '' }}>Filho(a)</option>
+                                <option value="Enteado" {{ 'selected' if cadastro and cadastro.parentesco == 'Enteado' else '' }}>Enteado(a)</option>
+                                <option value="Neto" {{ 'selected' if cadastro and cadastro.parentesco == 'Neto' else '' }}>Neto(a)/Bisneto(a)</option>
+                                <option value="Pai" {{ 'selected' if cadastro and cadastro.parentesco == 'Pai' else '' }}>Pai/Mãe</option>
+                                <option value="Sogro" {{ 'selected' if cadastro and cadastro.parentesco == 'Sogro' else '' }}>Sogro(a)</option>
+                                <option value="Irmao" {{ 'selected' if cadastro and cadastro.parentesco == 'Irmao' else '' }}>Irmão/Irmã</option>
+                                <option value="Genro" {{ 'selected' if cadastro and cadastro.parentesco == 'Genro' else '' }}>Genro/Nora</option>
+                                <option value="Outro" {{ 'selected' if cadastro and cadastro.parentesco == 'Outro' else '' }}>Outro parente</option>
+                                <option value="Nao_parente" {{ 'selected' if cadastro and cadastro.parentesco == 'Nao_parente' else '' }}>Não parente</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="escolaridad" class="form-label">Escolaridade</label>
+                            <select class="form-select" id="escolaridad" name="escolaridad">
+                                <option value="">Selecione...</option>
+                                <option value="Creche" {{ 'selected' if cadastro and cadastro.escolaridad == 'Creche' else '' }}>Creche</option>
+                                <option value="Pre_escola" {{ 'selected' if cadastro and cadastro.escolaridad == 'Pre_escola' else '' }}>Pré-escola</option>
+                                <option value="Fundamental_1_4" {{ 'selected' if cadastro and cadastro.escolaridad == 'Fundamental_1_4' else '' }}>Fundamental 1ª a 4ª</option>
+                                <option value="Fundamental_5_8" {{ 'selected' if cadastro and cadastro.escolaridad == 'Fundamental_5_8' else '' }}>Fundamental 5ª a 8ª</option>
+                                <option value="Medio_Completo" {{ 'selected' if cadastro and cadastro.escolaridad == 'Medio_Completo' else '' }}>Ensino Médio</option>
+                                <option value="Superior" {{ 'selected' if cadastro and cadastro.escolaridad == 'Superior' else '' }}>Superior</option>
+                                <option value="Nenhum" {{ 'selected' if cadastro and cadastro.escolaridad == 'Nenhum' else '' }}>Nenhum</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label for="situacion_trabajo" class="form-label">Situação Laboral</label>
+                            <select class="form-select" id="situacion_trabajo" name="situacion_trabajo">
+                                <option value="">Selecione...</option>
+                                <option value="Empregador" {{ 'selected' if cadastro and cadastro.situacion_trabajo == 'Empregador' else '' }}>Empregador</option>
+                                <option value="Assalariado_com_carteira" {{ 'selected' if cadastro and cadastro.situacion_trabajo == 'Assalariado_com_carteira' else '' }}>Assalariado com carteira</option>
+                                <option value="Autonomo" {{ 'selected' if cadastro and cadastro.situacion_trabajo == 'Autonomo' else '' }}>Autônomo</option>
+                                <option value="Desempregado" {{ 'selected' if cadastro and cadastro.situacion_trabajo == 'Desempregado' else '' }}>Desempregado</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 4: Informação de Saúde -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>4. Informação de Saúde</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-4">Condições de Saúde Autoreportadas</h5>
+                    
+                    <!-- Gestante e Deficiência -->
+                    <div class="row mb-4">
+                        <!-- Gestante -->
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Estado de Gravidez</h6>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="gestante" name="gestante"
+                                               {{ 'checked' if cadastro and cadastro.gestante else '' }}>
+                                        <label class="form-check-label" for="gestante">Está grávida?</label>
+                                    </div>
+                                    <div id="maternidad_referencia_div" style="display: none;">
+                                        <label for="maternidad_referencia" class="form-label">Maternidade de referência</label>
+                                        <input type="text" class="form-control" id="maternidad_referencia" name="maternidad_referencia"
+                                               value="{{ cadastro.maternidad_referencia if cadastro else '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Deficiência -->
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Deficiências</h6>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="discapacidad_auditiva" id="discapacidad_auditiva"
+                                               {{ 'checked' if cadastro and cadastro.discapacidad_auditiva else '' }}>
+                                        <label class="form-check-label" for="discapacidad_auditiva">Auditiva</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="discapacidad_visual" id="discapacidad_visual"
+                                               {{ 'checked' if cadastro and cadastro.discapacidad_visual else '' }}>
+                                        <label class="form-check-label" for="discapacidad_visual">Visual</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="discapacidad_fisica" id="discapacidad_fisica"
+                                               {{ 'checked' if cadastro and cadastro.discapacidad_fisica else '' }}>
+                                        <label class="form-check-label" for="discapacidad_fisica">Física</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="discapacidad_intelectual" id="discapacidad_intelectual"
+                                               {{ 'checked' if cadastro and cadastro.discapacidad_intelectual else '' }}>
+                                        <label class="form-check-label" for="discapacidad_intelectual">Intelectual</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" name="discapacidad_otra" id="discapacidad_otra"
+                                               {{ 'checked' if cadastro and cadastro.discapacidad_otra else '' }}>
+                                        <label class="form-check-label" for="discapacidad_otra">Outra</label>
+                                    </div>
+                                    <div id="discapacidad_otra_div" style="display: none;">
+                                        <input type="text" class="form-control" name="discapacidad_otra_especificar" placeholder="Especificar outra deficiência"
+                                               value="{{ cadastro.discapacidad_otra_especificar if cadastro else '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Condições Crônicas -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">Condições Crônicas</h6>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="hipertension" name="hipertension"
+                                                       {{ 'checked' if cadastro and cadastro.hipertension else '' }}>
+                                                <label class="form-check-label" for="hipertension">Tem Hipertensão?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="diabetes" name="diabetes"
+                                                       {{ 'checked' if cadastro and cadastro.diabetes else '' }}>
+                                                <label class="form-check-label" for="diabetes">Tem Diabetes?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="cancer" name="cancer"
+                                                       {{ 'checked' if cadastro and cadastro.cancer else '' }}>
+                                                <label class="form-check-label" for="cancer">Tem ou teve Câncer?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="avc_derrame" name="avc_derrame"
+                                                       {{ 'checked' if cadastro and cadastro.avc_derrame else '' }}>
+                                                <label class="form-check-label" for="avc_derrame">Teve AVC/Derrame?</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enfermedades Específicas -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Doença Respiratória</h6>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="enfermedad_respiratoria" name="enfermedad_respiratoria"
+                                               {{ 'checked' if cadastro and cadastro.enfermedad_respiratoria else '' }}>
+                                        <label class="form-check-label" for="enfermedad_respiratoria">Tem doença respiratória?</label>
+                                    </div>
+                                    <div id="enfermedad_respiratoria_div" style="display: none;">
+                                        <select class="form-select mt-2" name="enfermedad_respiratoria_tipo">
+                                            <option value="">Selecione tipo...</option>
+                                            <option value="Asma" {{ 'selected' if cadastro and cadastro.enfermedad_respiratoria_tipo == 'Asma' else '' }}>Asma</option>
+                                            <option value="DPOC" {{ 'selected' if cadastro and cadastro.enfermedad_respiratoria_tipo == 'DPOC' else '' }}>DPOC</option>
+                                            <option value="Outra" {{ 'selected' if cadastro and cadastro.enfermedad_respiratoria_tipo == 'Outra' else '' }}>Outra</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Doença Cardíaca</h6>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="enfermedad_cardiaca" name="enfermedad_cardiaca"
+                                               {{ 'checked' if cadastro and cadastro.enfermedad_cardiaca else '' }}>
+                                        <label class="form-check-label" for="enfermedad_cardiaca">Tem doença cardíaca?</label>
+                                    </div>
+                                    <div id="enfermedad_cardiaca_div" style="display: none;">
+                                        <select class="form-select mt-2" name="enfermedad_cardiaca_tipo">
+                                            <option value="">Selecione tipo...</option>
+                                            <option value="Insuficiencia" {{ 'selected' if cadastro and cadastro.enfermedad_cardiaca_tipo == 'Insuficiencia' else '' }}>Insuficiencia cardíaca</option>
+                                            <option value="Outra" {{ 'selected' if cadastro and cadastro.enfermedad_cardiaca_tipo == 'Outra' else '' }}>Outra</option>
+                                            <option value="No_sabe" {{ 'selected' if cadastro and cadastro.enfermedad_cardiaca_tipo == 'No_sabe' else '' }}>Não sabe</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title">Problemas Renais</h6>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="checkbox" id="problemas_rinones" name="problemas_rinones"
+                                               {{ 'checked' if cadastro and cadastro.problemas_rinones else '' }}>
+                                        <label class="form-check-label" for="problemas_rinones">Tem problemas nos rins?</label>
+                                    </div>
+                                    <div id="problemas_rinones_div" style="display: none;">
+                                        <select class="form-select mt-2" name="problemas_rinones_tipo">
+                                            <option value="">Selecione tipo...</option>
+                                            <option value="Insuficiencia" {{ 'selected' if cadastro and cadastro.problemas_rinones_tipo == 'Insuficiencia' else '' }}>Insuficiencia renal</option>
+                                            <option value="Outra" {{ 'selected' if cadastro and cadastro.problemas_rinones_tipo == 'Outra' else '' }}>Outra</option>
+                                            <option value="No_sabe" {{ 'selected' if cadastro and cadastro.problemas_rinones_tipo == 'No_sabe' else '' }}>Não sabe</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Otras Condiciones -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">Outras Condições de Saúde</h6>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="infarto" name="infarto"
+                                                       {{ 'checked' if cadastro and cadastro.infarto else '' }}>
+                                                <label class="form-check-label" for="infarto">Teve Infarto?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="diagnostico_salud_mental" name="diagnostico_salud_mental"
+                                                       {{ 'checked' if cadastro and cadastro.diagnostico_salud_mental else '' }}>
+                                                <label class="form-check-label" for="diagnostico_salud_mental">Tiene diagnóstico de saúde mental?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="acamado" name="acamado"
+                                                       {{ 'checked' if cadastro and cadastro.acamado else '' }}>
+                                                <label class="form-check-label" for="acamado">Está acamado ou domiciliado?</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hábitos e Uso de Substâncias -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">Hábitos e Uso de Substâncias</h6>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="fumante" name="fumante"
+                                                       {{ 'checked' if cadastro and cadastro.fumante else '' }}>
+                                                <label class="form-check-label" for="fumante">É fumante?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="alcohol" name="alcohol"
+                                                       {{ 'checked' if cadastro and cadastro.alcohol else '' }}>
+                                                <label class="form-check-label" for="alcohol">Consome álcool?</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="otras_drogas" name="otras_drogas"
+                                                       {{ 'checked' if cadastro and cadastro.otras_drogas else '' }}>
+                                                <label class="form-check-label" for="otras_drogas">Usa outras drogas?</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Segurança Alimentar -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-3">Segurança Alimentar</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="falta_alimentos" name="falta_alimentos"
+                                                       {{ 'checked' if cadastro and cadastro.falta_alimentos else '' }}>
+                                                <label class="form-check-label" for="falta_alimentos">
+                                                    Nos últimos 3 meses, os alimentos acabaram antes de ter dinheiro para comprar mais?
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="come_menos" name="come_menos"
+                                                       {{ 'checked' if cadastro and cadastro.come_menos else '' }}>
+                                                <label class="form-check-label" for="come_menos">
+                                                    Nos últimos 3 meses, teve que comer menos por falta de dinheiro?
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 5: Situação de Calle -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>5. Situação de Calle</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="situacion_calle" name="situacion_calle"
+                                       {{ 'checked' if cadastro and cadastro.situacion_calle else '' }}>
+                                <label class="form-check-label" for="situacion_calle">Está em situação de rua?</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="detalles_situacion_calle" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="tiempo_calle" class="form-label">Tempo em situação de calle</label>
+                                <select class="form-select" id="tiempo_calle" name="tiempo_calle">
+                                    <option value="">Selecione...</option>
+                                    <option value="menos_6" {{ 'selected' if cadastro and cadastro.tiempo_calle == 'menos_6' else '' }}>Menos de 6 meses</option>
+                                    <option value="6_12" {{ 'selected' if cadastro and cadastro.tiempo_calle == '6_12' else '' }}>6-12 meses</option>
+                                    <option value="1_5" {{ 'selected' if cadastro and cadastro.tiempo_calle == '1_5' else '' }}>1-5 anos</option>
+                                    <option value="mas_5" {{ 'selected' if cadastro and cadastro.tiempo_calle == 'mas_5' else '' }}>Mais de 5 anos</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="apoyo_institucional" name="apoyo_institucional"
+                                           {{ 'checked' if cadastro and cadastro.apoyo_institucional else '' }}>
+                                    <label class="form-check-label" for="apoyo_institucional">Recebe apoio de alguma instituição?</label>
+                                </div>
+                                <div class="mt-2" id="institucion_apoyo_div" style="display: none;">
+                                    <input type="text" class="form-control" id="institucion_apoyo" name="institucion_apoyo" placeholder="Especificar instituição"
+                                           value="{{ cadastro.institucion_apoyo if cadastro else '' }}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="referencia_familiar" name="referencia_familiar"
+                                           {{ 'checked' if cadastro and cadastro.referencia_familiar else '' }}>
+                                    <label class="form-check-label" for="referencia_familiar">Tem referência familiar?</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="acceso_higiene" class="form-label">Tem acesso a higiene pessoal?</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="acceso_higiene_bano" value="Banho"
+                                           {{ 'checked' if cadastro and cadastro.acceso_higiene_bano else '' }}>
+                                    <label class="form-check-label">Banho</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="acceso_higiene_sanitario" value="Sanitário"
+                                           {{ 'checked' if cadastro and cadastro.acceso_higiene_sanitario else '' }}>
+                                    <label class="form-check-label">Acesso a sanitário</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="acceso_higiene_bucal" value="Higiene bucal"
+                                           {{ 'checked' if cadastro and cadastro.acceso_higiene_bucal else '' }}>
+                                    <label class="form-check-label">Higiene bucal</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="acceso_higiene_otro" value="Outro"
+                                           {{ 'checked' if cadastro and cadastro.acceso_higiene_otro else '' }}>
+                                    <label class="form-check-label">Outro</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="comidas_dia" class="form-label">Quantas vezes se alimenta ao dia?</label>
+                                <input type="number" class="form-control" id="comidas_dia" name="comidas_dia" min="0" max="10"
+                                       value="{{ cadastro.comidas_dia if cadastro else '' }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção 6: Dados do Profissional -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>6. Dados do Profissional de Saúde</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cns_profesional" class="form-label">CNS do Profissional *</label>
+                            <input type="text" class="form-control" id="cns_profesional" name="cns_profesional" 
+                                   value="{{ acs.cns }}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cbo" class="form-label">CBO *</label>
+                            <input type="text" class="form-control" id="cbo" name="cbo" 
+                                   value="{{ acs.cbo }}" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cnes" class="form-label">CNES *</label>
+                            <input type="text" class="form-control" id="cnes" name="cnes" 
+                                   value="{{ acs.cnes }}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="ine" class="form-label">INE *</label>
+                            <input type="text" class="form-control" id="ine" name="ine" 
+                                   value="{{ acs.ine }}" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_registro" class="form-label">Data de Registro *</label>
+                            <input type="date" class="form-control" id="fecha_registro" name="fecha_registro" 
+                                   value="{{ cadastro.fecha_registro.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_registro else now.strftime('%Y-%m-%d') }}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">{{ 'Salvar Alterações' if cadastro else 'Salvar Registro' }}</button>
+                    <a href="{{ url_for('listar_cadastros') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Validação do formulário
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Mostrar/ocultar campos condicionais
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestante
+    const gestante = document.getElementById('gestante')
+    const maternidadDiv = document.getElementById('maternidad_referencia_div')
+    gestante.addEventListener('change', function() {
+        maternidadDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Deficiência outra
+    const deficienciaOutra = document.getElementById('discapacidad_otra')
+    const deficienciaOutraDiv = document.getElementById('discapacidad_otra_div')
+    deficienciaOutra.addEventListener('change', function() {
+        deficienciaOutraDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Doença respiratória
+    const doencaRespiratoria = document.getElementById('enfermedad_respiratoria')
+    const doencaRespiratoriaDiv = document.getElementById('enfermedad_respiratoria_div')
+    doencaRespiratoria.addEventListener('change', function() {
+        doencaRespiratoriaDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Doença cardíaca
+    const doencaCardiaca = document.getElementById('enfermedad_cardiaca')
+    const doencaCardiacaDiv = document.getElementById('enfermedad_cardiaca_div')
+    doencaCardiaca.addEventListener('change', function() {
+        doencaCardiacaDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Problemas renais
+    const problemasRenais = document.getElementById('problemas_rinones')
+    const problemasRenaisDiv = document.getElementById('problemas_rinones_div')
+    problemasRenais.addEventListener('change', function() {
+        problemasRenaisDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Situação de rua
+    const situacaoRua = document.getElementById('situacion_calle')
+    const detalhesSituacaoRua = document.getElementById('detalles_situacion_calle')
+    situacaoRua.addEventListener('change', function() {
+        detalhesSituacaoRua.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Apoio institucional
+    const apoioInst = document.getElementById('apoyo_institucional')
+    const apoioInstDiv = document.getElementById('institucion_apoyo_div')
+    apoioInst.addEventListener('change', function() {
+        apoioInstDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Mãe desconhecida
+    const maeDesc = document.getElementById('madre_desconocida')
+    const nomeMae = document.getElementById('nombre_madre')
+    maeDesc.addEventListener('change', function() {
+        nomeMae.value = this.checked ? 'Desconhecido' : ''
+        nomeMae.disabled = this.checked
+    })
+
+    // Pai desconhecido
+    const paiDesc = document.getElementById('padre_desconocido')
+    const nomePai = document.getElementById('nombre_padre')
+    paiDesc.addEventListener('change', function() {
+        nomePai.value = this.checked ? 'Desconhecido' : ''
+        nomePai.disabled = this.checked
+    })
+})
+</script>
+{% endblock %} 

@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Detalles del Cadastro</h1>
+        <div>
+            <a href="{{ url_for('editar_cadastro', id=cadastro.id) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a href="{{ url_for('listar_cadastros') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Sección 1: Identificación del Ciudadano -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>1. Identificación del Ciudadano</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>CNS/CPF:</strong> {{ cadastro.cns_cpf }}</p>
+                    <p><strong>Nombre Completo:</strong> {{ cadastro.nombre_completo }}</p>
+                    <p><strong>Nombre Social:</strong> {{ cadastro.nombre_social or 'No especificado' }}</p>
+                    <p><strong>Fecha de Nacimiento:</strong> {{ cadastro.fecha_nacimiento.strftime('%d/%m/%Y') }}</p>
+                    <p><strong>Sexo:</strong> {{ 'Masculino' if cadastro.sexo == 'M' else 'Femenino' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Raza/Color:</strong> {{ cadastro.raza_color }}</p>
+                    <p><strong>Etnia:</strong> {{ cadastro.etnia or 'No especificado' }}</p>
+                    <p><strong>NIS (PIS/PASEP):</strong> {{ cadastro.nis_pis_pasep or 'No especificado' }}</p>
+                    <p><strong>Nombre de la Madre:</strong> {{ cadastro.nombre_madre }}</p>
+                    <p><strong>Nombre del Padre:</strong> {{ cadastro.nombre_padre or 'No especificado' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 2: Información del Responsable Familiar -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>2. Información del Responsable Familiar</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>¿Es Responsable Familiar?</strong> {{ 'Sí' if cadastro.es_responsable_familiar else 'No' }}</p>
+                    <p><strong>CNS/CPF del Responsable:</strong> {{ cadastro.responsable_familiar_cns_cpf or 'No especificado' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Microárea:</strong> {{ cadastro.microarea or 'No especificada' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 3: Información Sociodemográfica -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>3. Información Sociodemográfica</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Parentesco:</strong> {{ cadastro.parentesco or 'No especificado' }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Escolaridad:</strong> {{ cadastro.escolaridad or 'No especificada' }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Situación Laboral:</strong> {{ cadastro.situacion_trabajo or 'No especificada' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 4: Información de Salud -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>4. Información de Salud</h4>
+        </div>
+        <div class="card-body">
+            <h5>Condiciones de Salud</h5>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.gestante else 'bi-x-circle-fill text-danger' }}"></i> Gestante</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.hipertension else 'bi-x-circle-fill text-danger' }}"></i> Hipertensión</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.diabetes else 'bi-x-circle-fill text-danger' }}"></i> Diabetes</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.cancer else 'bi-x-circle-fill text-danger' }}"></i> Cáncer</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.enfermedad_respiratoria else 'bi-x-circle-fill text-danger' }}"></i> Enfermedad Respiratoria</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.enfermedad_cardiaca else 'bi-x-circle-fill text-danger' }}"></i> Enfermedad Cardíaca</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.problemas_rinones else 'bi-x-circle-fill text-danger' }}"></i> Problemas Renales</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.avc_derrame else 'bi-x-circle-fill text-danger' }}"></i> AVC/Derrame</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h5>Hábitos y Uso de Sustancias</h5>
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="list-unstyled">
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.fumante else 'bi-x-circle-fill text-danger' }}"></i> Fumante</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.alcohol else 'bi-x-circle-fill text-danger' }}"></i> Consumo de Alcohol</li>
+                        <li><i class="bi {{ 'bi-check-circle-fill text-success' if cadastro.otras_drogas else 'bi-x-circle-fill text-danger' }}"></i> Uso de Otras Drogas</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 5: Situación de Calle -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>5. Situación de Calle</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>¿En Situación de Calle?</strong> {{ 'Sí' if cadastro.situacion_calle else 'No' }}</p>
+                    {% if cadastro.situacion_calle %}
+                        <p><strong>Tiempo en Situación de Calle:</strong> {{ cadastro.tiempo_calle }}</p>
+                        <p><strong>¿Recibe Apoyo Institucional?</strong> {{ 'Sí' if cadastro.apoyo_institucional else 'No' }}</p>
+                        {% if cadastro.apoyo_institucional %}
+                            <p><strong>Institución de Apoyo:</strong> {{ cadastro.institucion_apoyo }}</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {% if cadastro.situacion_calle %}
+                        <p><strong>¿Tiene Referencia Familiar?</strong> {{ 'Sí' if cadastro.referencia_familiar else 'No' }}</p>
+                        <p><strong>Acceso a Higiene:</strong> {{ cadastro.acceso_higiene or 'No especificado' }}</p>
+                        <p><strong>Comidas por Día:</strong> {{ cadastro.comidas_dia }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 6: Datos del Profesional -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>6. Datos del Profesional de Salud</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>CNS del Profesional:</strong> {{ cadastro.cns_profesional }}</p>
+                    <p><strong>CBO:</strong> {{ cadastro.cbo }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>CNES:</strong> {{ cadastro.cnes }}</p>
+                    <p><strong>INE:</strong> {{ cadastro.ine }}</p>
+                    <p><strong>Fecha de Registro:</strong> {{ cadastro.fecha_registro.strftime('%d/%m/%Y') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

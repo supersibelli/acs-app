@@ -1,0 +1,593 @@
+<!-- Seção 1: Identificação da Unidade de Saúde -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">1. Identificação da Unidade de Saúde</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cnes" class="form-label">Código CNES da Unidade *</label>
+                <input type="text" class="form-control" id="cnes" name="cnes" 
+                       value="{{ acs.cnes if acs else '' }}" required readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="ine" class="form-label">Código INE da Equipe *</label>
+                <input type="text" class="form-control" id="ine" name="ine" 
+                       value="{{ acs.ine if acs else '' }}" required readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="microarea" class="form-label">Microárea *</label>
+                <input type="text" class="form-control" id="microarea" name="microarea" 
+                       value="{{ acs.microareas if acs else '' }}" required readonly>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="fecha_registro" class="form-label">Data de Registro *</label>
+                <input type="date" class="form-control" id="fecha_registro" name="fecha_registro" 
+                       value="{{ cadastro.fecha_registro.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_registro else now.strftime('%Y-%m-%d') }}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="prontuario_familiar" class="form-label">Prontuário Familiar *</label>
+                <input type="text" class="form-control" id="prontuario_familiar" name="prontuario_familiar" 
+                       value="{{ cadastro.prontuario_familiar if cadastro else '' }}" required>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 2: Endereço -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">2. Endereço</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <label for="tipo_logradouro" class="form-label">Tipo de Logradouro *</label>
+                <select class="form-select" id="tipo_logradouro" name="tipo_logradouro" required>
+                    <option value="">Selecione...</option>
+                    <option value="Rua" {{ 'selected' if cadastro and cadastro.tipo_logradouro == 'Rua' else '' }}>Rua</option>
+                    <option value="Avenida" {{ 'selected' if cadastro and cadastro.tipo_logradouro == 'Avenida' else '' }}>Avenida</option>
+                    <option value="Travessa" {{ 'selected' if cadastro and cadastro.tipo_logradouro == 'Travessa' else '' }}>Travessa</option>
+                    <option value="Praça" {{ 'selected' if cadastro and cadastro.tipo_logradouro == 'Praça' else '' }}>Praça</option>
+                    <option value="Estrada" {{ 'selected' if cadastro and cadastro.tipo_logradouro == 'Estrada' else '' }}>Estrada</option>
+                    <option value="Rodovia" {{ 'selected' if cadastro and cadastro.tipo_logradouro == 'Rodovia' else '' }}>Rodovia</option>
+                    <option value="Outro" {{ 'selected' if cadastro and cadastro.tipo_logradouro == 'Outro' else '' }}>Outro</option>
+                </select>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="nombre_logradouro" class="form-label">Nome do Logradouro *</label>
+                <input type="text" class="form-control" id="nombre_logradouro" name="nombre_logradouro" 
+                       value="{{ cadastro.nombre_logradouro if cadastro else '' }}" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="numero" class="form-label">Número *</label>
+                <input type="text" class="form-control" id="numero" name="numero" 
+                       value="{{ cadastro.numero if cadastro else '' }}" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="complemento" class="form-label">Complemento</label>
+                <input type="text" class="form-control" id="complemento" name="complemento" 
+                       value="{{ cadastro.complemento if cadastro else '' }}" 
+                       placeholder="Apartamento, bloco, referência, etc.">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="barrio" class="form-label">Bairro *</label>
+                <input type="text" class="form-control" id="barrio" name="barrio" 
+                       value="{{ cadastro.barrio if cadastro else '' }}" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="municipio" class="form-label">Município *</label>
+                <input type="text" class="form-control" id="municipio" name="municipio" 
+                       value="{{ cadastro.municipio if cadastro else '' }}" required>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="uf" class="form-label">UF (Estado) *</label>
+                <select class="form-select" id="uf" name="uf" required>
+                    <option value="">Selecione...</option>
+                    {% for estado in ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'] %}
+                    <option value="{{ estado }}" {{ 'selected' if cadastro and cadastro.uf == estado else '' }}>{{ estado }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="cep" class="form-label">CEP *</label>
+                <input type="text" class="form-control" id="cep" name="cep" 
+                       value="{{ cadastro.cep if cadastro else '' }}"
+                       pattern="\d{5}-\d{3}" placeholder="XXXXX-XXX" required>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 3: Contato -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">3. Contato</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="telefono_residencial" class="form-label">Telefone Residencial</label>
+                <input type="tel" class="form-control" id="telefono_residencial" name="telefono_residencial" 
+                       value="{{ cadastro.telefono_residencial if cadastro else '' }}"
+                       pattern="\(\d{2}\) \d{4,5}-\d{4}" placeholder="(XX) XXXXX-XXXX">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="telefono_referencia" class="form-label">Telefone de Referência</label>
+                <input type="tel" class="form-control" id="telefono_referencia" name="telefono_referencia" 
+                       value="{{ cadastro.telefono_referencia if cadastro else '' }}"
+                       pattern="\(\d{2}\) \d{4,5}-\d{4}" placeholder="(XX) XXXXX-XXXX">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 4: Informação sobre Animais no Domicílio -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">4. Informação sobre Animais no Domicílio</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="tiene_animales" name="tiene_animales"
+                           {{ 'checked' if cadastro and cadastro.tiene_animales else '' }}>
+                    <label class="form-check-label" for="tiene_animales">
+                        Há Animais no Domicílio?
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label for="cantidad_animales" class="form-label">Quantidade de Animais</label>
+                <input type="number" class="form-control" id="cantidad_animales" name="cantidad_animales" 
+                       value="{{ cadastro.cantidad_animales if cadastro else '' }}"
+                       min="0">
+            </div>
+        </div>
+        <div id="tipos_animales_div" style="display: {{ 'block' if cadastro and cadastro.tiene_animales else 'none' }};">
+            <div class="row">
+                <div class="col-12">
+                    <label class="form-label">Tipos de Animais Presentes:</label>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="tipo_animal_gato" id="tipo_animal_gato"
+                                       {{ 'checked' if cadastro and cadastro.tipo_animal_gato else '' }}>
+                                <label class="form-check-label" for="tipo_animal_gato">Gato</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="tipo_animal_perro" id="tipo_animal_perro"
+                                       {{ 'checked' if cadastro and cadastro.tipo_animal_perro else '' }}>
+                                <label class="form-check-label" for="tipo_animal_perro">Cachorro</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="tipo_animal_pajaro" id="tipo_animal_pajaro"
+                                       {{ 'checked' if cadastro and cadastro.tipo_animal_pajaro else '' }}>
+                                <label class="form-check-label" for="tipo_animal_pajaro">Pássaro</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="tipo_animal_cria" id="tipo_animal_cria"
+                                       {{ 'checked' if cadastro and cadastro.tipo_animal_cria else '' }}>
+                                <label class="form-check-label" for="tipo_animal_cria">Animais de Criação</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="tipo_animal_otro" id="tipo_animal_otro"
+                                       {{ 'checked' if cadastro and cadastro.tipo_animal_otro else '' }}>
+                                <label class="form-check-label" for="tipo_animal_otro">Outros</label>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div id="otro_animal_div" style="display: {{ 'block' if cadastro and cadastro.tipo_animal_otro else 'none' }};">
+                                <input type="text" class="form-control" name="otro_animal_especificar" 
+                                       value="{{ cadastro.otro_animal_especificar if cadastro else '' }}"
+                                       placeholder="Especifique outros animais">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 5: Situação de Moradia -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">5. Situação de Moradia</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="tipo_domicilio" class="form-label">Tipo de Domicílio *</label>
+                <select class="form-select" id="tipo_domicilio" name="tipo_domicilio" required>
+                    <option value="">Selecione...</option>
+                    <option value="Casa" {{ 'selected' if cadastro and cadastro.tipo_domicilio == 'Casa' else '' }}>Casa</option>
+                    <option value="Apartamento" {{ 'selected' if cadastro and cadastro.tipo_domicilio == 'Apartamento' else '' }}>Apartamento</option>
+                    <option value="Comodo" {{ 'selected' if cadastro and cadastro.tipo_domicilio == 'Comodo' else '' }}>Cômodo</option>
+                    <option value="Outro" {{ 'selected' if cadastro and cadastro.tipo_domicilio == 'Outro' else '' }}>Outro</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="numero_moradores" class="form-label">Número de Moradores *</label>
+                <input type="number" class="form-control" id="numero_moradores" name="numero_moradores" 
+                       value="{{ cadastro.numero_moradores if cadastro else '' }}" min="1" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="numero_comodos" class="form-label">Número de Cômodos *</label>
+                <input type="number" class="form-control" id="numero_comodos" name="numero_comodos" 
+                       value="{{ cadastro.numero_comodos if cadastro else '' }}" min="1" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="energia_electrica" name="energia_electrica"
+                           {{ 'checked' if cadastro and cadastro.energia_electrica else '' }}>
+                    <label class="form-check-label" for="energia_electrica">
+                        Possui Energia Elétrica
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 6: Condição de Posse da Moradia -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">6. Condição de Posse da Moradia</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="propietario" name="propietario"
+                           {{ 'checked' if cadastro and cadastro.propietario else '' }}>
+                    <label class="form-check-label" for="propietario">Proprietário(a)</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="comodatario" name="comodatario"
+                           {{ 'checked' if cadastro and cadastro.comodatario else '' }}>
+                    <label class="form-check-label" for="comodatario">Comodatário(a)</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="beneficiario_banco_terra" name="beneficiario_banco_terra"
+                           {{ 'checked' if cadastro and cadastro.beneficiario_banco_terra else '' }}>
+                    <label class="form-check-label" for="beneficiario_banco_terra">Beneficiário(a) do Banco da Terra</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="parceiro_meeiro" name="parceiro_meeiro"
+                           {{ 'checked' if cadastro and cadastro.parceiro_meeiro else '' }}>
+                    <label class="form-check-label" for="parceiro_meeiro">Parceiro(a) / Meeiro(a)</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="assentado" name="assentado"
+                           {{ 'checked' if cadastro and cadastro.assentado else '' }}>
+                    <label class="form-check-label" for="assentado">Assentado(a)</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="posseiro" name="posseiro"
+                           {{ 'checked' if cadastro and cadastro.posseiro else '' }}>
+                    <label class="form-check-label" for="posseiro">Posseiro(a)</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="arrendatario" name="arrendatario"
+                           {{ 'checked' if cadastro and cadastro.arrendatario else '' }}>
+                    <label class="form-check-label" for="arrendatario">Arrendatário(a)</label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="no_aplica" name="no_aplica"
+                           {{ 'checked' if cadastro and cadastro.no_aplica else '' }}>
+                    <label class="form-check-label" for="no_aplica">Não se aplica</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 7: Condições de Moradia -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">7. Condições de Moradia</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="form-label">Material Predominante nas Paredes Externas *</label>
+                <select class="form-select" id="material_paredes" name="material_paredes" required>
+                    <option value="">Selecione...</option>
+                    <option value="alvenaria_com" {{ 'selected' if cadastro and cadastro.material_paredes == 'alvenaria_com' else '' }}>Alvenaria/Tijolo com Revestimento</option>
+                    <option value="alvenaria_sem" {{ 'selected' if cadastro and cadastro.material_paredes == 'alvenaria_sem' else '' }}>Alvenaria/Tijolo sem Revestimento</option>
+                    <option value="madeira_aparelhada" {{ 'selected' if cadastro and cadastro.material_paredes == 'madeira_aparelhada' else '' }}>Madeira Aparelhada</option>
+                    <option value="madeira_aproveitada" {{ 'selected' if cadastro and cadastro.material_paredes == 'madeira_aproveitada' else '' }}>Madeira Aproveitada</option>
+                    <option value="taipa_com" {{ 'selected' if cadastro and cadastro.material_paredes == 'taipa_com' else '' }}>Taipa com Revestimento</option>
+                    <option value="taipa_sem" {{ 'selected' if cadastro and cadastro.material_paredes == 'taipa_sem' else '' }}>Taipa sem Revestimento</option>
+                    <option value="palha" {{ 'selected' if cadastro and cadastro.material_paredes == 'palha' else '' }}>Palha</option>
+                    <option value="outro_material" {{ 'selected' if cadastro and cadastro.material_paredes == 'outro_material' else '' }}>Outro Material</option>
+                </select>
+            </div>
+            <div class="col-md-6" id="outro_material_div" style="display: {{ 'block' if cadastro and cadastro.material_paredes == 'outro_material' else 'none' }};">
+                <label class="form-label">Especifique o Material</label>
+                <input type="text" class="form-control" id="otro_material_especificar" name="otro_material_especificar"
+                       value="{{ cadastro.otro_material_especificar if cadastro else '' }}">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Tipo de Acesso ao Domicílio *</label>
+                <select class="form-select" id="tipo_acceso" name="tipo_acceso" required>
+                    <option value="">Selecione...</option>
+                    <option value="pavimento" {{ 'selected' if cadastro and cadastro.tipo_acceso == 'pavimento' else '' }}>Pavimento</option>
+                    <option value="terra" {{ 'selected' if cadastro and cadastro.tipo_acceso == 'terra' else '' }}>Terra/Barro</option>
+                    <option value="fluvial" {{ 'selected' if cadastro and cadastro.tipo_acceso == 'fluvial' else '' }}>Fluvial</option>
+                    <option value="outro_acceso" {{ 'selected' if cadastro and cadastro.tipo_acceso == 'outro_acceso' else '' }}>Outro</option>
+                </select>
+            </div>
+            <div class="col-md-6" id="outro_acceso_div" style="display: {{ 'block' if cadastro and cadastro.tipo_acceso == 'outro_acceso' else 'none' }};">
+                <label class="form-label">Especifique o Tipo de Acesso</label>
+                <input type="text" class="form-control" id="otro_acceso_especificar" name="otro_acceso_especificar"
+                       value="{{ cadastro.otro_acceso_especificar if cadastro else '' }}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 8: Saneamento e Condições da Água -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">8. Saneamento e Condições da Água</h4>
+    </div>
+    <div class="card-body">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="form-label">Destino do Lixo *</label>
+                <select class="form-select" id="destino_basura" name="destino_basura" required>
+                    <option value="">Selecione...</option>
+                    <option value="coleta" {{ 'selected' if cadastro and cadastro.destino_basura == 'coleta' else '' }}>Coleta Pública</option>
+                    <option value="queimado" {{ 'selected' if cadastro and cadastro.destino_basura == 'queimado' else '' }}>Queimado/Enterrado</option>
+                    <option value="ceu_aberto" {{ 'selected' if cadastro and cadastro.destino_basura == 'ceu_aberto' else '' }}>Céu Aberto</option>
+                    <option value="outro_destino" {{ 'selected' if cadastro and cadastro.destino_basura == 'outro_destino' else '' }}>Outro</option>
+                </select>
+            </div>
+            <div class="col-md-6" id="outro_destino_div" style="display: {{ 'block' if cadastro and cadastro.destino_basura == 'outro_destino' else 'none' }};">
+                <label class="form-label">Especifique o Destino do Lixo</label>
+                <input type="text" class="form-control" id="otro_destino_especificar" name="otro_destino_especificar"
+                       value="{{ cadastro.otro_destino_especificar if cadastro else '' }}">
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="form-label">Forma de Escoamento do Banheiro *</label>
+                <select class="form-select" id="escoamento_bano" name="escoamento_bano" required>
+                    <option value="">Selecione...</option>
+                    <option value="rede_esgoto" {{ 'selected' if cadastro and cadastro.escoamento_bano == 'rede_esgoto' else '' }}>Rede Coletora de Esgoto</option>
+                    <option value="fossa_septica" {{ 'selected' if cadastro and cadastro.escoamento_bano == 'fossa_septica' else '' }}>Fossa Séptica</option>
+                    <option value="fossa_rudimentar" {{ 'selected' if cadastro and cadastro.escoamento_bano == 'fossa_rudimentar' else '' }}>Fossa Rudimentar</option>
+                    <option value="ceu_aberto" {{ 'selected' if cadastro and cadastro.escoamento_bano == 'ceu_aberto' else '' }}>Céu Aberto</option>
+                    <option value="direto" {{ 'selected' if cadastro and cadastro.escoamento_bano == 'direto' else '' }}>Direto para Rio, Lago ou Mar</option>
+                    <option value="outra_forma_escoamento" {{ 'selected' if cadastro and cadastro.escoamento_bano == 'outra_forma_escoamento' else '' }}>Outra Forma</option>
+                </select>
+            </div>
+            <div class="col-md-6" id="outra_forma_escoamento_div" style="display: {{ 'block' if cadastro and cadastro.escoamento_bano == 'outra_forma_escoamento' else 'none' }};">
+                <label class="form-label">Especifique a Forma de Escoamento</label>
+                <input type="text" class="form-control" id="otra_forma_escoamento_especificar" name="otra_forma_escoamento_especificar"
+                       value="{{ cadastro.otra_forma_escoamento_especificar if cadastro else '' }}">
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <label class="form-label">Tratamento da Água para Consumo *</label>
+                <select class="form-select" id="tratamiento_agua" name="tratamiento_agua" required>
+                    <option value="">Selecione...</option>
+                    <option value="filtracao" {{ 'selected' if cadastro and cadastro.tratamiento_agua == 'filtracao' else '' }}>Filtração</option>
+                    <option value="fervura" {{ 'selected' if cadastro and cadastro.tratamiento_agua == 'fervura' else '' }}>Fervura</option>
+                    <option value="cloracao" {{ 'selected' if cadastro and cadastro.tratamiento_agua == 'cloracao' else '' }}>Cloração</option>
+                    <option value="sem_tratamento" {{ 'selected' if cadastro and cadastro.tratamiento_agua == 'sem_tratamento' else '' }}>Sem Tratamento</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Abastecimento de Água *</label>
+                <select class="form-select" id="abastecimiento_agua" name="abastecimiento_agua" required>
+                    <option value="">Selecione...</option>
+                    <option value="rede_publica" {{ 'selected' if cadastro and cadastro.abastecimiento_agua == 'rede_publica' else '' }}>Rede Pública</option>
+                    <option value="poco_nascente" {{ 'selected' if cadastro and cadastro.abastecimiento_agua == 'poco_nascente' else '' }}>Poço/Nascente no Domicílio</option>
+                    <option value="cisterna" {{ 'selected' if cadastro and cadastro.abastecimiento_agua == 'cisterna' else '' }}>Cisterna</option>
+                    <option value="carro_pipa" {{ 'selected' if cadastro and cadastro.abastecimiento_agua == 'carro_pipa' else '' }}>Carro Pipa</option>
+                    <option value="outra_fonte" {{ 'selected' if cadastro and cadastro.abastecimiento_agua == 'outra_fonte' else '' }}>Outra Fonte</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 9: Informação do Responsável Familiar -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">9. Informação do Responsável Familiar</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cartao_sus_responsable" class="form-label">CNS do Responsável *</label>
+                <input type="text" class="form-control" id="cartao_sus_responsable" name="cartao_sus_responsable"
+                       value="{{ cadastro.cartao_sus_responsable if cadastro else '' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="fecha_nacimiento_responsable" class="form-label">Data de Nascimento do Responsável</label>
+                <input type="date" class="form-control" id="fecha_nacimiento_responsable" name="fecha_nacimiento_responsable"
+                       value="{{ cadastro.fecha_nacimiento_responsable.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_nacimiento_responsable else '' }}">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="residencia_desde" class="form-label">Reside desde</label>
+                <input type="month" class="form-control" id="residencia_desde" name="residencia_desde"
+                       value="{{ cadastro.residencia_desde if cadastro else '' }}">
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="mudanza_reciente" name="mudanza_reciente"
+                           {{ 'checked' if cadastro and cadastro.mudanza_reciente else '' }}>
+                    <label class="form-check-label" for="mudanza_reciente">
+                        Mudança Recente
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="renta_familiar" class="form-label">Renda Familiar (Salários Mínimos)</label>
+                <select class="form-select" id="renta_familiar" name="renta_familiar">
+                    <option value="">Selecione...</option>
+                    <option value="0.25" {{ 'selected' if cadastro and cadastro.renta_familiar == '0.25' else '' }}>¼</option>
+                    <option value="0.5" {{ 'selected' if cadastro and cadastro.renta_familiar == '0.5' else '' }}>½</option>
+                    <option value="1" {{ 'selected' if cadastro and cadastro.renta_familiar == '1' else '' }}>1</option>
+                    <option value="2" {{ 'selected' if cadastro and cadastro.renta_familiar == '2' else '' }}>2</option>
+                    <option value="3" {{ 'selected' if cadastro and cadastro.renta_familiar == '3' else '' }}>3</option>
+                    <option value="4" {{ 'selected' if cadastro and cadastro.renta_familiar == '4' else '' }}>4+</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 10: Dados do Profissional -->
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">10. Dados do Profissional</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cartao_sus_profesional" class="form-label">CNS do Profissional *</label>
+                <input type="text" class="form-control" id="cartao_sus_profesional" name="cartao_sus_profesional" 
+                       value="{{ acs.cns if acs else '' }}" required readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="confirmacion_registro" name="confirmacion_registro"
+                           {{ 'checked' if cadastro and cadastro.confirmacion_registro else '' }}>
+                    <label class="form-check-label" for="confirmacion_registro">
+                        Confirmação do Registro
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="digitado_por" class="form-label">Digitado por</label>
+                <input type="text" class="form-control" id="digitado_por" name="digitado_por"
+                       value="{{ acs.nombre if acs else '' }}" readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="fecha_digitacion" class="form-label">Data de Digitação</label>
+                <input type="date" class="form-control" id="fecha_digitacion" name="fecha_digitacion"
+                       value="{{ cadastro.fecha_digitacion.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_digitacion else now.strftime('%Y-%m-%d') }}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Formatação do CEP
+document.getElementById('cep').addEventListener('input', function (e) {
+    let value = e.target.value.replace(/\D/g, '')
+    if (value.length > 5) {
+        value = value.slice(0, 5) + '-' + value.slice(5, 8)
+    }
+    e.target.value = value
+})
+
+// Formatação dos telefones
+function formatPhoneNumber(input) {
+    input.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '')
+        if (value.length > 10) {
+            value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7, 11)
+        } else {
+            value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 6) + '-' + value.slice(6, 10)
+        }
+        e.target.value = value
+    })
+}
+
+formatPhoneNumber(document.getElementById('telefono_residencial'))
+formatPhoneNumber(document.getElementById('telefono_referencia'))
+
+// Mostrar/ocultar campos condicionais
+document.addEventListener('DOMContentLoaded', function() {
+    // Animais
+    const tieneAnimales = document.getElementById('tiene_animales')
+    const cantidadAnimales = document.getElementById('cantidad_animales')
+    const tiposAnimalesDiv = document.getElementById('tipos_animales_div')
+    
+    tieneAnimales.addEventListener('change', function() {
+        cantidadAnimales.disabled = !this.checked
+        tiposAnimalesDiv.style.display = this.checked ? 'block' : 'none'
+        if (!this.checked) {
+            cantidadAnimales.value = ''
+        }
+    })
+
+    // Outro tipo de animal
+    const tipoAnimalOtro = document.getElementById('tipo_animal_otro')
+    const otroAnimalDiv = document.getElementById('otro_animal_div')
+    
+    tipoAnimalOtro.addEventListener('change', function() {
+        otroAnimalDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Material das paredes
+    const materialParedes = document.getElementById('material_paredes')
+    const outroMaterialDiv = document.getElementById('outro_material_div')
+    
+    materialParedes.addEventListener('change', function() {
+        outroMaterialDiv.style.display = this.value === 'outro_material' ? 'block' : 'none'
+    })
+
+    // Tipo de acesso
+    const tipoAcceso = document.getElementById('tipo_acceso')
+    const outroAccesoDiv = document.getElementById('outro_acceso_div')
+    
+    tipoAcceso.addEventListener('change', function() {
+        outroAccesoDiv.style.display = this.value === 'outro_acceso' ? 'block' : 'none'
+    })
+
+    // Destino do lixo
+    const destinoBasura = document.getElementById('destino_basura')
+    const outroDestinoDiv = document.getElementById('outro_destino_div')
+    
+    destinoBasura.addEventListener('change', function() {
+        outroDestinoDiv.style.display = this.value === 'outro_destino' ? 'block' : 'none'
+    })
+
+    // Forma de escoamento
+    const escoamentoBano = document.getElementById('escoamento_bano')
+    const outraFormaEscoamentoDiv = document.getElementById('outra_forma_escoamento_div')
+    
+    escoamentoBano.addEventListener('change', function() {
+        outraFormaEscoamentoDiv.style.display = this.value === 'outra_forma_escoamento' ? 'block' : 'none'
+    })
+})
+</script> 

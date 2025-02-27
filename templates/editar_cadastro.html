@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Editar Cadastro Individual</h2>
+            <a href="{{ url_for('listar_cadastros') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+        
+        <form method="POST" class="needs-validation" novalidate>
+            <!-- Reutilizar el mismo formulario que cadastro.html -->
+            {% include 'includes/_form_cadastro.html' %}
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <a href="{{ url_for('listar_cadastros') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Validación del formulario
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Pre-poblar campos condicionales
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestante
+    const gestante = document.getElementById('gestante')
+    const maternidadDiv = document.getElementById('maternidad_referencia_div')
+    if (gestante.checked) {
+        maternidadDiv.style.display = 'block'
+    }
+
+    // Discapacidad otra
+    const discapacidadOtra = document.getElementById('discapacidad_otra')
+    const discapacidadOtraDiv = document.getElementById('discapacidad_otra_div')
+    if (discapacidadOtra.checked) {
+        discapacidadOtraDiv.style.display = 'block'
+    }
+
+    // Enfermedad respiratoria
+    const enfRespiratoria = document.getElementById('enfermedad_respiratoria')
+    const enfRespiratoriaDiv = document.getElementById('enfermedad_respiratoria_div')
+    if (enfRespiratoria.checked) {
+        enfRespiratoriaDiv.style.display = 'block'
+    }
+
+    // Enfermedad cardíaca
+    const enfCardiaca = document.getElementById('enfermedad_cardiaca')
+    const enfCardiacaDiv = document.getElementById('enfermedad_cardiaca_div')
+    if (enfCardiaca.checked) {
+        enfCardiacaDiv.style.display = 'block'
+    }
+
+    // Problemas riñones
+    const probRinones = document.getElementById('problemas_rinones')
+    const probRinonesDiv = document.getElementById('problemas_rinones_div')
+    if (probRinones.checked) {
+        probRinonesDiv.style.display = 'block'
+    }
+
+    // Situación de calle
+    const sitCalle = document.getElementById('situacion_calle')
+    const detallesSitCalle = document.getElementById('detalles_situacion_calle')
+    if (sitCalle.checked) {
+        detallesSitCalle.style.display = 'block'
+    }
+
+    // Apoyo institucional
+    const apoyoInst = document.getElementById('apoyo_institucional')
+    const apoyoInstDiv = document.getElementById('institucion_apoyo_div')
+    if (apoyoInst.checked) {
+        apoyoInstDiv.style.display = 'block'
+    }
+
+    // Madre desconocida
+    const madreDesc = document.getElementById('madre_desconocida')
+    const nombreMadre = document.getElementById('nombre_madre')
+    if (madreDesc.checked) {
+        nombreMadre.value = 'Desconocido'
+        nombreMadre.disabled = true
+    }
+
+    // Padre desconocido
+    const padreDesc = document.getElementById('padre_desconocido')
+    const nombrePadre = document.getElementById('nombre_padre')
+    if (padreDesc.checked) {
+        nombrePadre.value = 'Desconocido'
+        nombrePadre.disabled = true
+    }
+})
+</script>
+{% endblock %} 

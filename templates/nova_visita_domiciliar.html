@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Nova Visita Domiciliar</h1>
+        <div>
+            <a href="{{ url_for('listar_visitas_domiciliares') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </div>
+    
+    <form method="POST" class="needs-validation" novalidate>
+        <!-- Reutilizar o formulário parcial -->
+        {% include 'includes/_form_visita_domiciliar.html' %}
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Salvar Visita</button>
+                <a href="{{ url_for('listar_visitas_domiciliares') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Validação do formulário
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Mostrar/ocultar campos condicionais
+document.addEventListener('DOMContentLoaded', function() {
+    // Tipo de imóvel
+    const tipoImovel = document.getElementById('tipo_inmueble')
+    const outroImovelDiv = document.getElementById('otro_inmueble_div')
+    tipoImovel.addEventListener('change', function() {
+        outroImovelDiv.style.display = this.value === '99' ? 'block' : 'none'
+    })
+
+    // Outro motivo
+    const outroMotivo = document.getElementById('otro_motivo')
+    const outroMotivoDiv = document.getElementById('otro_motivo_div')
+    outroMotivo.addEventListener('change', function() {
+        outroMotivoDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Pre-popular campos condicionais
+    if (tipoImovel.value === '99') {
+        outroImovelDiv.style.display = 'block'
+    }
+    if (outroMotivo.checked) {
+        outroMotivoDiv.style.display = 'block'
+    }
+})
+</script>
+{% endblock %} 

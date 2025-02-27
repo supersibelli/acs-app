@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Editar Atividade Coletiva</h2>
+            <a href="{{ url_for('listar_atividades_coletivas') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+        
+        <form method="POST" class="needs-validation" novalidate>
+            <!-- Reutilizar el formulario parcial -->
+            {% include 'includes/_form_atividade_coletiva.html' %}
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    <a href="{{ url_for('listar_atividades_coletivas') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Validação do formulário
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Mostrar/ocultar campos condicionais
+document.addEventListener('DOMContentLoaded', function() {
+    // Tipo de atividade
+    const tipoAtividade = document.getElementsByName('tipo_actividad')
+    const outroTipoDiv = document.getElementById('otro_tipo_div')
+    tipoAtividade.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            outroTipoDiv.style.display = this.value === '07' ? 'block' : 'none'
+        })
+    })
+
+    // Público alvo outros
+    const publicoOutros = document.getElementById('publico_otros')
+    const outroPublicoDiv = document.getElementById('otro_publico_div')
+    publicoOutros.addEventListener('change', function() {
+        outroPublicoDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Outras práticas
+    const praticaOutras = document.getElementById('practica_otras')
+    const outrasPraticasDiv = document.getElementById('otras_practicas_div')
+    praticaOutras.addEventListener('change', function() {
+        outrasPraticasDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Pre-popular campos condicionais
+    if (document.querySelector('input[name="tipo_actividad"]:checked')?.value === '07') {
+        outroTipoDiv.style.display = 'block'
+    }
+    if (publicoOutros.checked) {
+        outroPublicoDiv.style.display = 'block'
+    }
+    if (praticaOutras.checked) {
+        outrasPraticasDiv.style.display = 'block'
+    }
+})
+</script>
+{% endblock %} 

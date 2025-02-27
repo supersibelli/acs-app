@@ -1,0 +1,140 @@
+<!-- Sección 1: Identificación del Ciudadano -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>1. Identificación del Ciudadano</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cns_cpf" class="form-label">CNS o CPF del Ciudadano *</label>
+                <input type="text" class="form-control" id="cns_cpf" name="cns_cpf" 
+                       value="{{ cadastro.cns_cpf if cadastro else '' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="nombre_completo" class="form-label">Nombre Completo *</label>
+                <input type="text" class="form-control" id="nombre_completo" name="nombre_completo" 
+                       value="{{ cadastro.nombre_completo if cadastro else '' }}" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="nombre_social" class="form-label">Nombre Social</label>
+                <input type="text" class="form-control" id="nombre_social" name="nombre_social" 
+                       value="{{ cadastro.nombre_social if cadastro else '' }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento *</label>
+                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" 
+                       value="{{ cadastro.fecha_nacimiento.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_nacimiento else '' }}" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="sexo" class="form-label">Sexo *</label>
+                <select class="form-select" id="sexo" name="sexo" required>
+                    <option value="">Seleccione...</option>
+                    <option value="M" {{ 'selected' if cadastro and cadastro.sexo == 'M' else '' }}>Masculino</option>
+                    <option value="F" {{ 'selected' if cadastro and cadastro.sexo == 'F' else '' }}>Femenino</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="raza_color" class="form-label">Raza/Color *</label>
+                <select class="form-select" id="raza_color" name="raza_color" required>
+                    <option value="">Seleccione...</option>
+                    <option value="Branca" {{ 'selected' if cadastro and cadastro.raza_color == 'Branca' else '' }}>Branca</option>
+                    <option value="Preta" {{ 'selected' if cadastro and cadastro.raza_color == 'Preta' else '' }}>Preta</option>
+                    <option value="Parda" {{ 'selected' if cadastro and cadastro.raza_color == 'Parda' else '' }}>Parda</option>
+                    <option value="Amarela" {{ 'selected' if cadastro and cadastro.raza_color == 'Amarela' else '' }}>Amarela</option>
+                    <option value="Indígena" {{ 'selected' if cadastro and cadastro.raza_color == 'Indígena' else '' }}>Indígena</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="etnia" class="form-label">Etnia</label>
+                <input type="text" class="form-control" id="etnia" name="etnia" 
+                       value="{{ cadastro.etnia if cadastro else '' }}">
+                <small class="form-text text-muted">Especificar si es indígena</small>
+            </div>
+        </div>
+
+        <!-- Continuar con el resto de los campos del formulario siguiendo el mismo patrón -->
+        <!-- ... -->
+
+    </div>
+</div>
+
+<!-- Sección 2: Información del Responsable Familiar -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>2. Información del Responsable Familiar</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="es_responsable_familiar" name="es_responsable_familiar"
+                           {{ 'checked' if cadastro and cadastro.es_responsable_familiar else '' }}>
+                    <label class="form-check-label" for="es_responsable_familiar">
+                        O Cidadão é o Responsável Familiar?
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="responsable_familiar_cns_cpf" class="form-label">CNS o CPF del Responsable Familiar</label>
+                <input type="text" class="form-control" id="responsable_familiar_cns_cpf" name="responsable_familiar_cns_cpf"
+                       value="{{ cadastro.responsable_familiar_cns_cpf if cadastro else '' }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="microarea" class="form-label">Microárea</label>
+                <input type="text" class="form-control" id="microarea" name="microarea"
+                       value="{{ cadastro.microarea if cadastro else '' }}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Continuar con el resto de las secciones del formulario -->
+<!-- ... -->
+
+<!-- Sección 6: Datos del Profesional -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>6. Datos del Profesional de Salud</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cns_profesional" class="form-label">CNS del Profesional *</label>
+                <input type="text" class="form-control" id="cns_profesional" name="cns_profesional" 
+                       value="{{ cadastro.cns_profesional if cadastro else '' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="cbo" class="form-label">CBO *</label>
+                <input type="text" class="form-control" id="cbo" name="cbo" 
+                       value="{{ cadastro.cbo if cadastro else '' }}" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cnes" class="form-label">CNES *</label>
+                <input type="text" class="form-control" id="cnes" name="cnes" 
+                       value="{{ cadastro.cnes if cadastro else '' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="ine" class="form-label">INE *</label>
+                <input type="text" class="form-control" id="ine" name="ine" 
+                       value="{{ cadastro.ine if cadastro else '' }}" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="fecha_registro" class="form-label">Fecha de Registro *</label>
+                <input type="date" class="form-control" id="fecha_registro" name="fecha_registro" 
+                       value="{{ cadastro.fecha_registro.strftime('%Y-%m-%d') if cadastro and cadastro.fecha_registro else '' }}" required>
+            </div>
+        </div>
+    </div>
+</div> 

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Detalhes da Atividade Coletiva</h5>
+            <div>
+                <a href="{{ url_for('editar_atividade_coletiva', id=atividade.id) }}" class="btn btn-light">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Dados Básicos -->
+            <h6 class="border-bottom pb-2 mb-3">Dados Básicos</h6>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <p><strong>Data:</strong> {{ atividade.data_atividade.strftime('%d/%m/%Y') }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Turno:</strong> 
+                        {% if atividade.turno == 'M' %}Manhã
+                        {% elif atividade.turno == 'T' %}Tarde
+                        {% else %}Noite{% endif %}
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Número da Folha:</strong> {{ atividade.numero_folha or 'Não especificado' }}</p>
+                </div>
+            </div>
+
+            <!-- Tipo de Atividade -->
+            <h6 class="border-bottom pb-2 mb-3">Tipo de Atividade</h6>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <p><strong>Tipo:</strong> 
+                        {% if atividade.tipo_atividade == '01' %}Reunião de Equipe
+                        {% elif atividade.tipo_atividade == '02' %}Reunião com outras Equipes de Saúde
+                        {% elif atividade.tipo_atividade == '03' %}Reunião Intersetorial/Conselho Local de Saúde/Controle Social
+                        {% elif atividade.tipo_atividade == '04' %}Planejamento/Monitoramento das Ações da Equipe
+                        {% elif atividade.tipo_atividade == '05' %}Discussão de Caso/Projeto Terapêutico Singular (PTS)
+                        {% elif atividade.tipo_atividade == '06' %}Educação Permanente
+                        {% else %}{{ atividade.outro_tipo_atividade }}{% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Público Alvo -->
+            <h6 class="border-bottom pb-2 mb-3">Público Alvo</h6>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    {% if atividade.publico_comunidade %}<p><i class="bi bi-check-circle-fill text-success"></i> Comunidade em Geral</p>{% endif %}
+                    {% if atividade.publico_criancas_0_3 %}<p><i class="bi bi-check-circle-fill text-success"></i> Crianças de 0 a 3 anos</p>{% endif %}
+                    {% if atividade.publico_criancas_4_5 %}<p><i class="bi bi-check-circle-fill text-success"></i> Crianças de 4 a 5 anos</p>{% endif %}
+                    {% if atividade.publico_criancas_6_11 %}<p><i class="bi bi-check-circle-fill text-success"></i> Crianças de 6 a 11 anos</p>{% endif %}
+                    {% if atividade.publico_adolescentes %}<p><i class="bi bi-check-circle-fill text-success"></i> Adolescentes</p>{% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% if atividade.publico_mulheres %}<p><i class="bi bi-check-circle-fill text-success"></i> Mulheres</p>{% endif %}
+                    {% if atividade.publico_gestantes %}<p><i class="bi bi-check-circle-fill text-success"></i> Gestantes</p>{% endif %}
+                    {% if atividade.publico_homens %}<p><i class="bi bi-check-circle-fill text-success"></i> Homens</p>{% endif %}
+                    {% if atividade.publico_idosos %}<p><i class="bi bi-check-circle-fill text-success"></i> Idosos</p>{% endif %}
+                    {% if atividade.publico_doencas_cronicas %}<p><i class="bi bi-check-circle-fill text-success"></i> Pessoas com Doenças Crônicas</p>{% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% if atividade.publico_usuarios_tabaco %}<p><i class="bi bi-check-circle-fill text-success"></i> Usuários de Tabaco</p>{% endif %}
+                    {% if atividade.publico_usuarios_alcool %}<p><i class="bi bi-check-circle-fill text-success"></i> Usuários de Álcool</p>{% endif %}
+                    {% if atividade.publico_usuarios_drogas %}<p><i class="bi bi-check-circle-fill text-success"></i> Usuários de Outras Drogas</p>{% endif %}
+                    {% if atividade.publico_saude_mental %}<p><i class="bi bi-check-circle-fill text-success"></i> Pessoas com Transtornos Mentais</p>{% endif %}
+                    {% if atividade.publico_profissionais_educacao %}<p><i class="bi bi-check-circle-fill text-success"></i> Profissionais da Educação</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Temas Abordados -->
+            <h6 class="border-bottom pb-2 mb-3">Temas Abordados</h6>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    {% if atividade.tema_dengue %}<p><i class="bi bi-check-circle-fill text-success"></i> Dengue/Aedes aegypti</p>{% endif %}
+                    {% if atividade.tema_dst_aids %}<p><i class="bi bi-check-circle-fill text-success"></i> DST/AIDS</p>{% endif %}
+                    {% if atividade.tema_alimentacao %}<p><i class="bi bi-check-circle-fill text-success"></i> Alimentação</p>{% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% if atividade.tema_autocuidado %}<p><i class="bi bi-check-circle-fill text-success"></i> Autocuidado</p>{% endif %}
+                    {% if atividade.tema_planejamento_familiar %}<p><i class="bi bi-check-circle-fill text-success"></i> Planejamento Familiar</p>{% endif %}
+                    {% if atividade.tema_saude_bucal %}<p><i class="bi bi-check-circle-fill text-success"></i> Saúde Bucal</p>{% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% if atividade.tema_saude_mental %}<p><i class="bi bi-check-circle-fill text-success"></i> Saúde Mental</p>{% endif %}
+                    {% if atividade.tema_tuberculose %}<p><i class="bi bi-check-circle-fill text-success"></i> Tuberculose</p>{% endif %}
+                    {% if atividade.tema_violencia %}<p><i class="bi bi-check-circle-fill text-success"></i> Violência</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Práticas em Saúde -->
+            <h6 class="border-bottom pb-2 mb-3">Práticas em Saúde</h6>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    {% if atividade.pratica_antropometria %}<p><i class="bi bi-check-circle-fill text-success"></i> Antropometria</p>{% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% if atividade.pratica_corporal %}<p><i class="bi bi-check-circle-fill text-success"></i> Prática Corporal/Atividade Física</p>{% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% if atividade.pratica_escovacao %}<p><i class="bi bi-check-circle-fill text-success"></i> Escovação Dental Supervisionada</p>{% endif %}
+                </div>
+            </div>
+
+            <!-- Dados do Profissional -->
+            <h6 class="border-bottom pb-2 mb-3">Dados do Profissional</h6>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <p><strong>CNS:</strong> {{ atividade.cns_profissional }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>CBO:</strong> {{ atividade.cbo }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>CNES:</strong> {{ atividade.cnes_profissional }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>INE:</strong> {{ atividade.ine_profissional }}</p>
+                </div>
+            </div>
+
+            <!-- Resultados -->
+            <h6 class="border-bottom pb-2 mb-3">Resultados</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Quantidade de Participantes:</strong> {{ atividade.quantidade_participantes }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Avaliações Alteradas:</strong> {{ atividade.avaliacoes_alteradas or '0' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

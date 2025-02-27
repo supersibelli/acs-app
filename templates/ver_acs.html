@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Detalhes do ACS</h5>
+            <div>
+                <a href="{{ url_for('editar_acs', id=acs.id) }}" class="btn btn-light">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                <a href="{{ url_for('listar_acs') }}" class="btn btn-light ms-2">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Dados Pessoais -->
+            <h6 class="border-bottom pb-2 mb-3">Dados Pessoais</h6>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Nome:</strong> {{ acs.nombre }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>CNS:</strong> {{ acs.cns }}</p>
+                </div>
+            </div>
+
+            <!-- Dados Profissionais -->
+            <h6 class="border-bottom pb-2 mb-3">Dados Profissionais</h6>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <p><strong>CBO:</strong> {{ acs.cbo }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>CNES:</strong> {{ acs.cnes }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>INE:</strong> {{ acs.ine }}</p>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <p><strong>Unidade de Saúde:</strong> {{ acs.unidade_saude }}</p>
+                </div>
+            </div>
+
+            <!-- Área de Atuação -->
+            <h6 class="border-bottom pb-2 mb-3">Área de Atuação</h6>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Microáreas:</strong> {{ acs.microareas }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Status:</strong> 
+                        <span class="badge {{ 'bg-success' if acs.activo else 'bg-danger' }}">
+                            {{ 'Ativo' if acs.activo else 'Inativo' }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dados de Registro -->
+            <h6 class="border-bottom pb-2 mb-3">Dados de Registro</h6>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Data de Registro:</strong> {{ acs.fecha_registro.strftime('%d/%m/%Y') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

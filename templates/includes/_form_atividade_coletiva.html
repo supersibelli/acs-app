@@ -1,0 +1,446 @@
+<!-- Seção 1: Identificação da Atividade -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>1. Identificação da Atividade</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cnes" class="form-label">Código CNES da Unidade de Saúde *</label>
+                <input type="text" class="form-control" id="cnes" name="cnes" 
+                       value="{{ atividade.cnes if atividade else '' }}" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="ine" class="form-label">Código INE da Equipe de Saúde *</label>
+                <input type="text" class="form-control" id="ine" name="ine" 
+                       value="{{ atividade.ine if atividade else '' }}" required>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label for="data_atividade" class="form-label">Data da Atividade *</label>
+                <input type="date" class="form-control" id="data_atividade" name="data_atividade" 
+                       value="{{ atividade.data_atividade.strftime('%Y-%m-%d') if atividade and atividade.data_atividade else '' }}" required>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="turno" class="form-label">Turno *</label>
+                <select class="form-select" id="turno" name="turno" required>
+                    <option value="">Selecione...</option>
+                    <option value="M" {{ 'selected' if atividade and atividade.turno == 'M' else '' }}>Manhã (M)</option>
+                    <option value="T" {{ 'selected' if atividade and atividade.turno == 'T' else '' }}>Tarde (T)</option>
+                    <option value="N" {{ 'selected' if atividade and atividade.turno == 'N' else '' }}>Noite (N)</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="numero_folha" class="form-label">Número da Folha</label>
+                <input type="text" class="form-control" id="numero_folha" name="numero_folha"
+                       value="{{ atividade.numero_folha if atividade else '' }}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 2: Tipo de Atividade -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>2. Tipo de Atividade</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 mb-3">
+                <label class="form-label">Tipo de Atividade *</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_01" value="01" required
+                           {{ 'checked' if atividade and atividade.tipo_actividad == '01' else '' }}>
+                    <label class="form-check-label" for="tipo_01">
+                        01 - Reunião de Equipe
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_02" value="02"
+                           {{ 'checked' if atividade and atividade.tipo_actividad == '02' else '' }}>
+                    <label class="form-check-label" for="tipo_02">
+                        02 - Reunião com outras Equipes de Saúde
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_03" value="03"
+                           {{ 'checked' if atividade and atividade.tipo_actividad == '03' else '' }}>
+                    <label class="form-check-label" for="tipo_03">
+                        03 - Reunião Intersetorial/Conselho Local de Saúde/Controle Social
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_04" value="04"
+                           {{ 'checked' if atividade and atividade.tipo_actividad == '04' else '' }}>
+                    <label class="form-check-label" for="tipo_04">
+                        04 - Planejamento/Monitoramento das Ações da Equipe
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_05" value="05"
+                           {{ 'checked' if atividade and atividade.tipo_actividad == '05' else '' }}>
+                    <label class="form-check-label" for="tipo_05">
+                        05 - Discussão de Caso/Projeto Terapêutico Singular (PTS)
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_06" value="06"
+                           {{ 'checked' if atividade and atividade.tipo_actividad == '06' else '' }}>
+                    <label class="form-check-label" for="tipo_06">
+                        06 - Educação Permanente
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_07" value="07"
+                           {{ 'checked' if atividade and atividade.tipo_actividad == '07' else '' }}>
+                    <label class="form-check-label" for="tipo_07">
+                        07 - Outros
+                    </label>
+                </div>
+                <div id="otro_tipo_div" class="mt-2" style="display: none;">
+                    <input type="text" class="form-control" id="otro_tipo_actividad" name="otro_tipo_actividad" 
+                           placeholder="Especifique o tipo de atividade"
+                           value="{{ atividade.otro_tipo_actividad if atividade else '' }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 3: Público Alvo -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>3. Público Alvo</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_comunidad" name="publico_comunidad"
+                           {{ 'checked' if atividade and atividade.publico_comunidad else '' }}>
+                    <label class="form-check-label" for="publico_comunidad">
+                        01 - Comunidade em Geral
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_ninos_0_3" name="publico_ninos_0_3"
+                           {{ 'checked' if atividade and atividade.publico_ninos_0_3 else '' }}>
+                    <label class="form-check-label" for="publico_ninos_0_3">
+                        02 - Crianças de 0 a 3 anos
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_ninos_4_5" name="publico_ninos_4_5"
+                           {{ 'checked' if atividade and atividade.publico_ninos_4_5 else '' }}>
+                    <label class="form-check-label" for="publico_ninos_4_5">
+                        03 - Crianças de 4 a 5 anos
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_ninos_6_11" name="publico_ninos_6_11"
+                           {{ 'checked' if atividade and atividade.publico_ninos_6_11 else '' }}>
+                    <label class="form-check-label" for="publico_ninos_6_11">
+                        04 - Crianças de 6 a 11 anos
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_adolescentes" name="publico_adolescentes"
+                           {{ 'checked' if atividade and atividade.publico_adolescentes else '' }}>
+                    <label class="form-check-label" for="publico_adolescentes">
+                        05 - Adolescentes
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_mujeres" name="publico_mujeres"
+                           {{ 'checked' if atividade and atividade.publico_mujeres else '' }}>
+                    <label class="form-check-label" for="publico_mujeres">
+                        06 - Mulheres
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_gestantes" name="publico_gestantes"
+                           {{ 'checked' if atividade and atividade.publico_gestantes else '' }}>
+                    <label class="form-check-label" for="publico_gestantes">
+                        07 - Gestantes
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_hombres" name="publico_hombres"
+                           {{ 'checked' if atividade and atividade.publico_hombres else '' }}>
+                    <label class="form-check-label" for="publico_hombres">
+                        08 - Homens
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_familiares" name="publico_familiares"
+                           {{ 'checked' if atividade and atividade.publico_familiares else '' }}>
+                    <label class="form-check-label" for="publico_familiares">
+                        09 - Familiares
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_adultos_mayores" name="publico_adultos_mayores"
+                           {{ 'checked' if atividade and atividade.publico_adultos_mayores else '' }}>
+                    <label class="form-check-label" for="publico_adultos_mayores">
+                        10 - Idosos
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_enf_cronicas" name="publico_enf_cronicas"
+                           {{ 'checked' if atividade and atividade.publico_enf_cronicas else '' }}>
+                    <label class="form-check-label" for="publico_enf_cronicas">
+                        11 - Pessoas com Doenças Crônicas
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_tabaco" name="publico_tabaco"
+                           {{ 'checked' if atividade and atividade.publico_tabaco else '' }}>
+                    <label class="form-check-label" for="publico_tabaco">
+                        12 - Usuários de Tabaco
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_alcohol" name="publico_alcohol"
+                           {{ 'checked' if atividade and atividade.publico_alcohol else '' }}>
+                    <label class="form-check-label" for="publico_alcohol">
+                        13 - Usuários de Álcool
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_drogas" name="publico_drogas"
+                           {{ 'checked' if atividade and atividade.publico_drogas else '' }}>
+                    <label class="form-check-label" for="publico_drogas">
+                        14 - Usuários de Outras Drogas
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_salud_mental" name="publico_salud_mental"
+                           {{ 'checked' if atividade and atividade.publico_salud_mental else '' }}>
+                    <label class="form-check-label" for="publico_salud_mental">
+                        15 - Pessoas com Transtornos Mentais
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_profesionales_educacion" name="publico_profesionales_educacion"
+                           {{ 'checked' if atividade and atividade.publico_profesionales_educacion else '' }}>
+                    <label class="form-check-label" for="publico_profesionales_educacion">
+                        16 - Profissionais da Educação
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="publico_otros" name="publico_otros"
+                           {{ 'checked' if atividade and atividade.publico_otros else '' }}>
+                    <label class="form-check-label" for="publico_otros">
+                        17 - Outros
+                    </label>
+                </div>
+                <div id="otro_publico_div" class="mt-2" style="display: none;">
+                    <input type="text" class="form-control" id="publico_otros_especificar" name="publico_otros_especificar" 
+                           placeholder="Especifique o público alvo"
+                           value="{{ atividade.publico_otros_especificar if atividade else '' }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 4: Temas Abordados -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>4. Temas Abordados</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_dengue" name="tema_dengue"
+                           {{ 'checked' if atividade and atividade.tema_dengue else '' }}>
+                    <label class="form-check-label" for="tema_dengue">
+                        01 - Dengue/Aedes aegypti
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_dst_aids" name="tema_dst_aids"
+                           {{ 'checked' if atividade and atividade.tema_dst_aids else '' }}>
+                    <label class="form-check-label" for="tema_dst_aids">
+                        02 - DST/AIDS
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_alimentacao" name="tema_alimentacao"
+                           {{ 'checked' if atividade and atividade.tema_alimentacao else '' }}>
+                    <label class="form-check-label" for="tema_alimentacao">
+                        03 - Alimentação
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_autocuidado" name="tema_autocuidado"
+                           {{ 'checked' if atividade and atividade.tema_autocuidado else '' }}>
+                    <label class="form-check-label" for="tema_autocuidado">
+                        04 - Autocuidado
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_planejamento_familiar" name="tema_planejamento_familiar"
+                           {{ 'checked' if atividade and atividade.tema_planejamento_familiar else '' }}>
+                    <label class="form-check-label" for="tema_planejamento_familiar">
+                        05 - Planejamento Familiar
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_saude_bucal" name="tema_saude_bucal"
+                           {{ 'checked' if atividade and atividade.tema_saude_bucal else '' }}>
+                    <label class="form-check-label" for="tema_saude_bucal">
+                        06 - Saúde Bucal
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_saude_mental" name="tema_saude_mental"
+                           {{ 'checked' if atividade and atividade.tema_saude_mental else '' }}>
+                    <label class="form-check-label" for="tema_saude_mental">
+                        07 - Saúde Mental
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_tuberculose" name="tema_tuberculose"
+                           {{ 'checked' if atividade and atividade.tema_tuberculose else '' }}>
+                    <label class="form-check-label" for="tema_tuberculose">
+                        08 - Tuberculose
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_violencia" name="tema_violencia"
+                           {{ 'checked' if atividade and atividade.tema_violencia else '' }}>
+                    <label class="form-check-label" for="tema_violencia">
+                        09 - Violência
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="tema_otros" name="tema_otros"
+                           {{ 'checked' if atividade and atividade.tema_otros else '' }}>
+                    <label class="form-check-label" for="tema_otros">
+                        10 - Outros
+                    </label>
+                </div>
+                <div id="otro_tema_div" class="mt-2" style="display: none;">
+                    <input type="text" class="form-control" id="tema_otros_especificar" name="tema_otros_especificar" 
+                           placeholder="Especifique o tema"
+                           value="{{ atividade.tema_otros_especificar if atividade else '' }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 5: Práticas em Saúde -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>5. Práticas em Saúde</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="practica_antropometria" name="practica_antropometria"
+                           {{ 'checked' if atividade and atividade.practica_antropometria else '' }}>
+                    <label class="form-check-label" for="practica_antropometria">
+                        01 - Antropometria
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="practica_corporal" name="practica_corporal"
+                           {{ 'checked' if atividade and atividade.practica_corporal else '' }}>
+                    <label class="form-check-label" for="practica_corporal">
+                        02 - Prática Corporal/Atividade Física
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="practica_escovacao" name="practica_escovacao"
+                           {{ 'checked' if atividade and atividade.practica_escovacao else '' }}>
+                    <label class="form-check-label" for="practica_escovacao">
+                        03 - Escovação Dental Supervisionada
+                    </label>
+                </div>
+                <div class="form-check mb-2">
+                    <input class="form-check-input" type="checkbox" id="practica_otras" name="practica_otras"
+                           {{ 'checked' if atividade and atividade.practica_otras else '' }}>
+                    <label class="form-check-label" for="practica_otras">
+                        04 - Outros
+                    </label>
+                </div>
+                <div id="otras_practicas_div" class="mt-2" style="display: none;">
+                    <input type="text" class="form-control" id="practica_otras_especificar" name="practica_otras_especificar" 
+                           placeholder="Especifique a prática"
+                           value="{{ atividade.practica_otras_especificar if atividade else '' }}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 6: Dados do Profissional -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>6. Dados do Profissional</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cns_profesional" class="form-label">CNS do Profissional *</label>
+                <input type="text" class="form-control" id="cns_profesional" name="cns_profesional" 
+                       value="{{ acs.cns }}" readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="cbo" class="form-label">CBO *</label>
+                <input type="text" class="form-control" id="cbo" name="cbo" 
+                       value="{{ acs.cbo }}" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cnes_profesional" class="form-label">CNES *</label>
+                <input type="text" class="form-control" id="cnes_profesional" name="cnes_profesional" 
+                       value="{{ acs.cnes }}" readonly>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="ine_profesional" class="form-label">INE *</label>
+                <input type="text" class="form-control" id="ine_profesional" name="ine_profesional" 
+                       value="{{ acs.ine }}" readonly>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção 7: Resultados -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>7. Resultados</h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="cantidad_participantes" class="form-label">Quantidade de Participantes *</label>
+                <input type="number" class="form-control" id="cantidad_participantes" name="cantidad_participantes" min="0" required
+                       value="{{ atividade.cantidad_participantes if atividade else '' }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="evaluaciones_alteradas" class="form-label">Avaliações Alteradas</label>
+                <input type="number" class="form-control" id="evaluaciones_alteradas" name="evaluaciones_alteradas" min="0"
+                       value="{{ atividade.evaluaciones_alteradas if atividade else '' }}">
+            </div>
+        </div>
+    </div>
+</div> 

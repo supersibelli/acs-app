@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>{{ 'Editar' if cadastro else 'Novo' }} Cadastro Domiciliar</h2>
+            <a href="{{ url_for('listar_cadastros_domiciliares') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+        </div>
+        
+        <form method="POST" class="needs-validation" novalidate>
+            <!-- Reutilizar o formulário parcial -->
+            {% include 'includes/_form_cadastro_domiciliar.html' %}
+
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        {{ 'Salvar Alterações' if cadastro else 'Salvar Registro' }}
+                    </button>
+                    <a href="{{ url_for('listar_cadastros_domiciliares') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Validação do formulário
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Formatação automática do CEP
+document.getElementById('cep').addEventListener('input', function (e) {
+    let value = e.target.value.replace(/\D/g, '')
+    if (value.length > 5) {
+        value = value.slice(0, 5) + '-' + value.slice(5, 8)
+    }
+    e.target.value = value
+})
+
+// Formatação automática de telefones
+function formatPhoneNumber(input) {
+    input.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '')
+        if (value.length > 10) {
+            value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 7) + '-' + value.slice(7, 11)
+        } else {
+            value = '(' + value.slice(0, 2) + ') ' + value.slice(2, 6) + '-' + value.slice(6, 10)
+        }
+        e.target.value = value
+    })
+}
+
+formatPhoneNumber(document.getElementById('telefono_residencial'))
+formatPhoneNumber(document.getElementById('telefono_referencia'))
+
+// Mostrar/ocultar campos de animais
+document.getElementById('tiene_animales').addEventListener('change', function() {
+    const cantidadAnimales = document.getElementById('cantidad_animales')
+    const tiposAnimalesDiv = document.getElementById('tipos_animales_div')
+    
+    cantidadAnimales.disabled = !this.checked
+    tiposAnimalesDiv.style.display = this.checked ? 'block' : 'none'
+    
+    if (!this.checked) {
+        cantidadAnimales.value = ''
+    }
+})
+
+// Mostrar/ocultar campo para especificar outro tipo de animal
+document.getElementById('tipo_animal_otro').addEventListener('change', function() {
+    document.getElementById('otro_animal_div').style.display = this.checked ? 'block' : 'none'
+})
+
+// Pre-popular campos condicionais
+document.addEventListener('DOMContentLoaded', function() {
+    // Animais
+    const tieneAnimales = document.getElementById('tiene_animales')
+    const cantidadAnimales = document.getElementById('cantidad_animales')
+    const tiposAnimalesDiv = document.getElementById('tipos_animales_div')
+    
+    if (tieneAnimales.checked) {
+        cantidadAnimales.disabled = false
+        tiposAnimalesDiv.style.display = 'block'
+    }
+
+    // Outro tipo de animal
+    const tipoAnimalOtro = document.getElementById('tipo_animal_otro')
+    const otroAnimalDiv = document.getElementById('otro_animal_div')
+    
+    if (tipoAnimalOtro.checked) {
+        otroAnimalDiv.style.display = 'block'
+    }
+})
+</script>
+{% endblock %} 

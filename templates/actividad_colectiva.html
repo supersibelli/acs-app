@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h2 class="mb-4">Ficha de Atividade Coletiva</h2>
+        <form method="POST" class="needs-validation" novalidate>
+            <!-- Sección 1: Identificación de la Actividad -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>1. Identificação da Atividade</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cnes" class="form-label">Código CNES da Unidade de Saúde *</label>
+                            <input type="text" class="form-control" id="cnes" name="cnes" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="ine" class="form-label">Código INE da Equipe de Saúde *</label>
+                            <input type="text" class="form-control" id="ine" name="ine" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="fecha_actividad" class="form-label">Data da Atividade *</label>
+                            <input type="date" class="form-control" id="fecha_actividad" name="fecha_actividad" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="turno" class="form-label">Turno *</label>
+                            <select class="form-select" id="turno" name="turno" required>
+                                <option value="">Selecione...</option>
+                                <option value="M">Manhã (M)</option>
+                                <option value="T">Tarde (T)</option>
+                                <option value="N">Noite (N)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="numero_hoja" class="form-label">Número da Folha</label>
+                            <input type="text" class="form-control" id="numero_hoja" name="numero_hoja">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 2: Tipo de Actividad -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>2. Tipo de Atividade</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Tipo de Atividade *</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_01" value="01" required>
+                                <label class="form-check-label" for="tipo_01">
+                                    01 - Reunião de Equipe
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_02" value="02">
+                                <label class="form-check-label" for="tipo_02">
+                                    02 - Reunião com outras Equipes de Saúde
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_03" value="03">
+                                <label class="form-check-label" for="tipo_03">
+                                    03 - Reunião Intersetorial/Conselho Local de Saúde/Controle Social
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_04" value="04">
+                                <label class="form-check-label" for="tipo_04">
+                                    04 - Planejamento/Monitoramento das Ações da Equipe
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_05" value="05">
+                                <label class="form-check-label" for="tipo_05">
+                                    05 - Discussão de Caso/Projeto Terapêutico Singular (PTS)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_06" value="06">
+                                <label class="form-check-label" for="tipo_06">
+                                    06 - Educação Permanente
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="tipo_actividad" id="tipo_07" value="07">
+                                <label class="form-check-label" for="tipo_07">
+                                    07 - Outros
+                                </label>
+                            </div>
+                            <div id="otro_tipo_div" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="otro_tipo_actividad" name="otro_tipo_actividad" placeholder="Especifique o tipo de atividade">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 3: Público Objetivo -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>3. Público Alvo</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_comunidad" name="publico_comunidad">
+                                <label class="form-check-label" for="publico_comunidad">
+                                    01 - Comunidade em Geral
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_ninos_0_3" name="publico_ninos_0_3">
+                                <label class="form-check-label" for="publico_ninos_0_3">
+                                    02 - Crianças de 0 a 3 anos
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_ninos_4_5" name="publico_ninos_4_5">
+                                <label class="form-check-label" for="publico_ninos_4_5">
+                                    03 - Crianças de 4 a 5 anos
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_ninos_6_11" name="publico_ninos_6_11">
+                                <label class="form-check-label" for="publico_ninos_6_11">
+                                    04 - Crianças de 6 a 11 anos
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_adolescentes" name="publico_adolescentes">
+                                <label class="form-check-label" for="publico_adolescentes">
+                                    05 - Adolescentes
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_mujeres" name="publico_mujeres">
+                                <label class="form-check-label" for="publico_mujeres">
+                                    06 - Mulheres
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_gestantes" name="publico_gestantes">
+                                <label class="form-check-label" for="publico_gestantes">
+                                    07 - Gestantes
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_hombres" name="publico_hombres">
+                                <label class="form-check-label" for="publico_hombres">
+                                    08 - Homens
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_familiares" name="publico_familiares">
+                                <label class="form-check-label" for="publico_familiares">
+                                    09 - Familiares
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_adultos_mayores" name="publico_adultos_mayores">
+                                <label class="form-check-label" for="publico_adultos_mayores">
+                                    10 - Idosos
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_enf_cronicas" name="publico_enf_cronicas">
+                                <label class="form-check-label" for="publico_enf_cronicas">
+                                    11 - Pessoas com Doenças Crônicas
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_tabaco" name="publico_tabaco">
+                                <label class="form-check-label" for="publico_tabaco">
+                                    12 - Usuários de Tabaco
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_alcohol" name="publico_alcohol">
+                                <label class="form-check-label" for="publico_alcohol">
+                                    13 - Usuários de Álcool
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_drogas" name="publico_drogas">
+                                <label class="form-check-label" for="publico_drogas">
+                                    14 - Usuários de Outras Drogas
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_salud_mental" name="publico_salud_mental">
+                                <label class="form-check-label" for="publico_salud_mental">
+                                    15 - Pessoas com Transtornos Mentais
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_profesionales_educacion" name="publico_profesionales_educacion">
+                                <label class="form-check-label" for="publico_profesionales_educacion">
+                                    16 - Profissionais da Educação
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="publico_otros" name="publico_otros">
+                                <label class="form-check-label" for="publico_otros">
+                                    17 - Outros
+                                </label>
+                            </div>
+                            <div id="otro_publico_div" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="publico_otros_especificar" name="publico_otros_especificar" placeholder="Especifique o público alvo">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 4: Temas Tratados -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>4. Temas Abordados</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_aedes" name="tema_aedes">
+                                <label class="form-check-label" for="tema_aedes">
+                                    01 - Dengue/Aedes aegypti
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_agravos" name="tema_agravos">
+                                <label class="form-check-label" for="tema_agravos">
+                                    02 - DST/AIDS
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_alimentacion" name="tema_alimentacion">
+                                <label class="form-check-label" for="tema_alimentacion">
+                                    03 - Alimentação
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_autocuidado" name="tema_autocuidado">
+                                <label class="form-check-label" for="tema_autocuidado">
+                                    04 - Autocuidado
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_ciudadania" name="tema_ciudadania">
+                                <label class="form-check-label" for="tema_ciudadania">
+                                    05 - Planejamento Familiar
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_dependencia" name="tema_dependencia">
+                                <label class="form-check-label" for="tema_dependencia">
+                                    06 - Saúde Bucal
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_envejecimiento" name="tema_envejecimiento">
+                                <label class="form-check-label" for="tema_envejecimiento">
+                                    07 - Saúde Mental
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_plantas" name="tema_plantas">
+                                <label class="form-check-label" for="tema_plantas">
+                                    08 - Tuberculose
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_violencia" name="tema_violencia">
+                                <label class="form-check-label" for="tema_violencia">
+                                    09 - Violência
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="tema_otros" name="tema_otros">
+                                <label class="form-check-label" for="tema_otros">
+                                    10 - Outros
+                                </label>
+                            </div>
+                            <div id="otro_tema_div" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="tema_otros_especificar" name="tema_otros_especificar" placeholder="Especifique o tema">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 5: Prácticas en Salud -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>5. Práticas em Saúde</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="practica_antropometria" name="practica_antropometria">
+                                <label class="form-check-label" for="practica_antropometria">
+                                    01 - Antropometria
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="practica_corporal" name="practica_corporal">
+                                <label class="form-check-label" for="practica_corporal">
+                                    02 - Prática Corporal/Atividade Física
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="practica_escovacao" name="practica_escovacao">
+                                <label class="form-check-label" for="practica_escovacao">
+                                    03 - Escovação Dental Supervisionada
+                                </label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="practica_otras" name="practica_otras">
+                                <label class="form-check-label" for="practica_otras">
+                                    04 - Outros
+                                </label>
+                            </div>
+                            <div id="otras_practicas_div" class="mt-2" style="display: none;">
+                                <input type="text" class="form-control" id="practica_otras_especificar" name="practica_otras_especificar" placeholder="Especifique a prática">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 6: Datos del Profesional Responsable -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>6. Dados do Profissional</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cns_profesional" class="form-label">CNS do Profissional *</label>
+                            <input type="text" class="form-control" id="cns_profesional" name="cns_profesional" 
+                                   value="{{ acs.cns }}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="cbo" class="form-label">CBO *</label>
+                            <input type="text" class="form-control" id="cbo" name="cbo" 
+                                   value="{{ acs.cbo }}" readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cnes_profesional" class="form-label">CNES *</label>
+                            <input type="text" class="form-control" id="cnes_profesional" name="cnes_profesional" 
+                                   value="{{ acs.cnes }}" readonly>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="ine_profesional" class="form-label">INE *</label>
+                            <input type="text" class="form-control" id="ine_profesional" name="ine_profesional" 
+                                   value="{{ acs.ine }}" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección 7: Número de Participantes -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>7. Resultados</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="cantidad_participantes" class="form-label">Quantidade de Participantes *</label>
+                            <input type="number" class="form-control" id="cantidad_participantes" name="cantidad_participantes" min="0" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="evaluaciones_alteradas" class="form-label">Avaliações Alteradas</label>
+                            <input type="number" class="form-control" id="evaluaciones_alteradas" name="evaluaciones_alteradas" min="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary">
+                        {{ 'Salvar Alterações' if editar else 'Salvar Atividade' }}
+                    </button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancelar</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Validación del formulario
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Mostrar/ocultar campos condicionales
+document.addEventListener('DOMContentLoaded', function() {
+    // Tipo de actividad
+    const tipoActividad = document.getElementsByName('tipo_actividad')
+    const otroTipoDiv = document.getElementById('otro_tipo_div')
+    tipoActividad.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            otroTipoDiv.style.display = this.value === '07' ? 'block' : 'none'
+        })
+    })
+
+    // Público objetivo otros
+    const publicoOtros = document.getElementById('publico_otros')
+    const otroPublicoDiv = document.getElementById('otro_publico_div')
+    publicoOtros.addEventListener('change', function() {
+        otroPublicoDiv.style.display = this.checked ? 'block' : 'none'
+    })
+
+    // Inicializar fecha de actividad con la fecha actual
+    const fechaActividad = document.getElementById('fecha_actividad')
+    const today = new Date().toISOString().split('T')[0]
+    fechaActividad.value = today
+
+    // Otras prácticas
+    const practicaOtras = document.getElementById('practica_otras')
+    const otrasPracticasDiv = document.getElementById('otras_practicas_div')
+    practicaOtras.addEventListener('change', function() {
+        otrasPracticasDiv.style.display = this.checked ? 'block' : 'none'
+    })
+})
+</script>
+{% endblock %} 

@@ -1,0 +1,636 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{{ 'Editar' if editar else 'Nueva' }} Visita Domiciliar</h1>
+        <div>
+            <a href="{{ url_for('listar_visitas_domiciliares') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+    
+    <!-- Agregar los estilos de jQuery UI -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <style>
+    .ui-autocomplete {
+        max-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 9999;
+    }
+    .ui-menu-item {
+        padding: 8px 12px;
+        border-bottom: 1px solid #eee;
+    }
+    .ui-menu-item:hover {
+        background-color: #f8f9fa;
+        cursor: pointer;
+    }
+    .ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        margin: 0;
+    }
+    .ciudadano-item {
+        display: flex;
+        flex-direction: column;
+    }
+    .ciudadano-nombre {
+        font-weight: bold;
+    }
+    .ciudadano-info {
+        font-size: 0.85em;
+        color: #6c757d;
+    }
+    </style>
+    
+    <form method="POST" class="needs-validation" novalidate>
+        <!-- Sección 1: Datos Básicos -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">1. Datos Básicos</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="fecha_registro" class="form-label">Fecha *</label>
+                        <input type="date" class="form-control" id="fecha_registro" name="fecha_registro" 
+                               value="{{ visita.fecha_registro.strftime('%Y-%m-%d') if visita and visita.fecha_registro else now.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="turno" class="form-label">Turno *</label>
+                        <select class="form-select" id="turno" name="turno" required>
+                            <option value="">Seleccione...</option>
+                            <option value="M" {{ 'selected' if visita and visita.turno == 'M' else '' }}>Mañana</option>
+                            <option value="T" {{ 'selected' if visita and visita.turno == 'T' else '' }}>Tarde</option>
+                            <option value="N" {{ 'selected' if visita and visita.turno == 'N' else '' }}>Noche</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="microarea" class="form-label">Microárea *</label>
+                        {% set microareas = acs.microareas.split(',') %}
+                        {% if microareas|length == 1 %}
+                            <input type="text" class="form-control" id="microarea" name="microarea" 
+                                   value="{{ microareas[0] }}" readonly required>
+                        {% else %}
+                            <select class="form-select" id="microarea" name="microarea" required>
+                                <option value="">Seleccione...</option>
+                                {% for microarea in microareas %}
+                                <option value="{{ microarea }}" {{ 'selected' if visita and visita.microarea == microarea else '' }}>
+                                    Microárea {{ microarea }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label for="tipo_inmueble" class="form-label">Tipo de Inmueble *</label>
+                        <select class="form-select" id="tipo_inmueble" name="tipo_inmueble" required onchange="mostrarOtroInmueble()">
+                            <option value="">Seleccione...</option>
+                            <option value="01" {{ 'selected' if visita and visita.tipo_inmueble == '01' else '' }}>01 - Domicilio</option>
+                            <option value="02" {{ 'selected' if visita and visita.tipo_inmueble == '02' else '' }}>02 - Comercio</option>
+                            <option value="03" {{ 'selected' if visita and visita.tipo_inmueble == '03' else '' }}>03 - Terreno Baldío</option>
+                            <option value="04" {{ 'selected' if visita and visita.tipo_inmueble == '04' else '' }}>04 - Ponto Estratégico (PE)</option>
+                            <option value="05" {{ 'selected' if visita and visita.tipo_inmueble == '05' else '' }}>05 - Escuela</option>
+                            <option value="06" {{ 'selected' if visita and visita.tipo_inmueble == '06' else '' }}>06 - Guardería</option>
+                            <option value="07" {{ 'selected' if visita and visita.tipo_inmueble == '07' else '' }}>07 - Abrigo</option>
+                            <option value="08" {{ 'selected' if visita and visita.tipo_inmueble == '08' else '' }}>08 - Institución de larga permanencia para ancianos</option>
+                            <option value="09" {{ 'selected' if visita and visita.tipo_inmueble == '09' else '' }}>09 - Unidad Prisional</option>
+                            <option value="10" {{ 'selected' if visita and visita.tipo_inmueble == '10' else '' }}>10 - Unidad de Medida Socioeducativa</option>
+                            <option value="11" {{ 'selected' if visita and visita.tipo_inmueble == '11' else '' }}>11 - Delegacia</option>
+                            <option value="12" {{ 'selected' if visita and visita.tipo_inmueble == '12' else '' }}>12 - Establecimiento Religioso</option>
+                            <option value="99" {{ 'selected' if visita and visita.tipo_inmueble == '99' else '' }}>99 - Otros</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3" id="otro_inmueble_div" style="display: {{ 'block' if visita and visita.tipo_inmueble == '99' else 'none' }};">
+                        <label for="tipo_inmueble_otro" class="form-label">Especifique otro tipo</label>
+                        <input type="text" class="form-control" id="tipo_inmueble_otro" name="tipo_inmueble_otro"
+                               value="{{ visita.tipo_inmueble_otro if visita else '' }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 2: Identificación del Ciudadano -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">2. Identificación del Ciudadano</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="busqueda_ciudadano" class="form-label">Buscar Ciudadano (CNS/CPF o Nombre) *</label>
+                        <input type="text" class="form-control" id="busqueda_ciudadano" 
+                               placeholder="Comience a escribir para buscar..."
+                               value="{{ visita.ciudadano.nombre_completo if visita and visita.ciudadano else '' }}"
+                               autocomplete="off">
+                        <div class="form-text">
+                            Escriba al menos 2 caracteres para ver sugerencias
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="cns_ciudadano" class="form-label">CNS/CPF del Ciudadano *</label>
+                        <input type="text" class="form-control" id="cns_ciudadano" name="cns_ciudadano" 
+                               value="{{ visita.cns_ciudadano if visita else '' }}" readonly required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="nombre_ciudadano" class="form-label">Nombre del Ciudadano</label>
+                        <input type="text" class="form-control" id="nombre_ciudadano" readonly
+                               value="{{ visita.ciudadano.nombre_completo if visita and visita.ciudadano else '' }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="domicilio" class="form-label">Domicilio</label>
+                        <input type="text" class="form-control" id="domicilio" readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                        <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" readonly
+                               value="{{ visita.fecha_nacimiento.strftime('%Y-%m-%d') if visita and visita.fecha_nacimiento else '' }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="sexo" class="form-label">Sexo</label>
+                        <input type="text" class="form-control" id="sexo_display" readonly>
+                        <input type="hidden" id="sexo" name="sexo" value="{{ visita.sexo if visita else '' }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" id="visita_compartida" name="visita_compartida"
+                                   {{ 'checked' if visita and visita.visita_compartida else '' }}>
+                            <label class="form-check-label" for="visita_compartida">
+                                Visita Compartida
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 3: Motivos de la Visita -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">3. Motivos de la Visita</h4>
+            </div>
+            <div class="card-body">
+                <!-- Motivos Generales -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">Motivos Generales</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="cadastramento_atualizacao" name="cadastramento_atualizacao"
+                                   {{ 'checked' if visita and visita.cadastramento_atualizacao else '' }}>
+                            <label class="form-check-label" for="cadastramento_atualizacao">
+                                01 - Cadastramento/Atualização
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="visita_periodica" name="visita_periodica"
+                                   {{ 'checked' if visita and visita.visita_periodica else '' }}>
+                            <label class="form-check-label" for="visita_periodica">
+                                02 - Visita Periódica
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="busca_ativa" name="busca_ativa"
+                                   {{ 'checked' if visita and visita.busca_ativa else '' }}>
+                            <label class="form-check-label" for="busca_ativa">
+                                03 - Búsqueda Activa
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="consulta_medica" name="consulta_medica"
+                                   {{ 'checked' if visita and visita.consulta_medica else '' }}>
+                            <label class="form-check-label" for="consulta_medica">
+                                04 - Consulta Médica
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="examen" name="examen"
+                                   {{ 'checked' if visita and visita.examen else '' }}>
+                            <label class="form-check-label" for="examen">
+                                05 - Examen
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="vacuna" name="vacuna"
+                                   {{ 'checked' if visita and visita.vacuna else '' }}>
+                            <label class="form-check-label" for="vacuna">
+                                06 - Vacuna
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="bolsa_familia" name="bolsa_familia"
+                                   {{ 'checked' if visita and visita.bolsa_familia else '' }}>
+                            <label class="form-check-label" for="bolsa_familia">
+                                07 - Condicionalidades del Bolsa Família
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acompañamiento de Grupos Prioritarios -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">Acompañamiento de Grupos Prioritarios</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="acomp_gestante" name="acomp_gestante"
+                                   {{ 'checked' if visita and visita.acomp_gestante else '' }}>
+                            <label class="form-check-label" for="acomp_gestante">
+                                08 - Acompañamiento de Gestante
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="acomp_puerpera" name="acomp_puerpera"
+                                   {{ 'checked' if visita and visita.acomp_puerpera else '' }}>
+                            <label class="form-check-label" for="acomp_puerpera">
+                                09 - Acompañamiento de Puérpera
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="acomp_recem_nascido" name="acomp_recem_nascido"
+                                   {{ 'checked' if visita and visita.acomp_recem_nascido else '' }}>
+                            <label class="form-check-label" for="acomp_recem_nascido">
+                                10 - Acompañamiento de Recién Nacido
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="acomp_nino" name="acomp_nino"
+                                   {{ 'checked' if visita and visita.acomp_nino else '' }}>
+                            <label class="form-check-label" for="acomp_nino">
+                                11 - Acompañamiento de Niño/a
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_desnutricion" name="persona_desnutricion"
+                                   {{ 'checked' if visita and visita.persona_desnutricion else '' }}>
+                            <label class="form-check-label" for="persona_desnutricion">
+                                12 - Persona con Desnutrición
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Acompañamiento de Enfermedades Crónicas -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">Acompañamiento de Enfermedades Crónicas</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_rehabilitacion" name="persona_rehabilitacion"
+                                   {{ 'checked' if visita and visita.persona_rehabilitacion else '' }}>
+                            <label class="form-check-label" for="persona_rehabilitacion">
+                                13 - Persona en Rehabilitación o con Discapacidad
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_hipertension" name="persona_hipertension"
+                                   {{ 'checked' if visita and visita.persona_hipertension else '' }}>
+                            <label class="form-check-label" for="persona_hipertension">
+                                14 - Persona con Hipertensión
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_diabetes" name="persona_diabetes"
+                                   {{ 'checked' if visita and visita.persona_diabetes else '' }}>
+                            <label class="form-check-label" for="persona_diabetes">
+                                15 - Persona con Diabetes
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_asma" name="persona_asma"
+                                   {{ 'checked' if visita and visita.persona_asma else '' }}>
+                            <label class="form-check-label" for="persona_asma">
+                                16 - Persona con Asma
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_dpoc" name="persona_dpoc"
+                                   {{ 'checked' if visita and visita.persona_dpoc else '' }}>
+                            <label class="form-check-label" for="persona_dpoc">
+                                17 - Persona con DPOC/Enfisema
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_cancer" name="persona_cancer"
+                                   {{ 'checked' if visita and visita.persona_cancer else '' }}>
+                            <label class="form-check-label" for="persona_cancer">
+                                18 - Persona con Cáncer
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_otras_cronicas" name="persona_otras_cronicas"
+                                   {{ 'checked' if visita and visita.persona_otras_cronicas else '' }}>
+                            <label class="form-check-label" for="persona_otras_cronicas">
+                                19 - Persona con Otras Enfermedades Crónicas
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_hanseniase" name="persona_hanseniase"
+                                   {{ 'checked' if visita and visita.persona_hanseniase else '' }}>
+                            <label class="form-check-label" for="persona_hanseniase">
+                                20 - Persona con Hanseníase
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="persona_tuberculosis" name="persona_tuberculosis"
+                                   {{ 'checked' if visita and visita.persona_tuberculosis else '' }}>
+                            <label class="form-check-label" for="persona_tuberculosis">
+                                21 - Persona con Tuberculosis
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Otros Seguimientos Específicos -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">Otros Seguimientos Específicos</h5>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="sintomaticos_respiratorios" name="sintomaticos_respiratorios"
+                                   {{ 'checked' if visita and visita.sintomaticos_respiratorios else '' }}>
+                            <label class="form-check-label" for="sintomaticos_respiratorios">
+                                22 - Sintomáticos Respiratorios
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="tabagista" name="tabagista"
+                                   {{ 'checked' if visita and visita.tabagista else '' }}>
+                            <label class="form-check-label" for="tabagista">
+                                23 - Tabagista
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="domiciliados_acamados" name="domiciliados_acamados"
+                                   {{ 'checked' if visita and visita.domiciliados_acamados else '' }}>
+                            <label class="form-check-label" for="domiciliados_acamados">
+                                24 - Domiciliados/Acamados
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="vulnerabilidade_social" name="vulnerabilidade_social"
+                                   {{ 'checked' if visita and visita.vulnerabilidade_social else '' }}>
+                            <label class="form-check-label" for="vulnerabilidade_social">
+                                25 - Condiciones de Vulnerabilidad Social
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="saude_mental" name="saude_mental"
+                                   {{ 'checked' if visita and visita.saude_mental else '' }}>
+                            <label class="form-check-label" for="saude_mental">
+                                26 - Salud Mental
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="usuario_alcool" name="usuario_alcool"
+                                   {{ 'checked' if visita and visita.usuario_alcool else '' }}>
+                            <label class="form-check-label" for="usuario_alcool">
+                                27 - Usuario de Alcohol
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="usuario_drogas" name="usuario_drogas"
+                                   {{ 'checked' if visita and visita.usuario_drogas else '' }}>
+                            <label class="form-check-label" for="usuario_drogas">
+                                28 - Usuario de Otras Drogas
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Control Ambiental / Vectores -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">Control Ambiental / Vectores</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="accion_educativa" name="accion_educativa"
+                                   {{ 'checked' if visita and visita.accion_educativa else '' }}>
+                            <label class="form-check-label" for="accion_educativa">
+                                29 - Acción Educativa
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="inmueble_foco" name="inmueble_foco"
+                                   {{ 'checked' if visita and visita.inmueble_foco else '' }}>
+                            <label class="form-check-label" for="inmueble_foco">
+                                30 - Inmueble con Foco
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="accion_mecanica" name="accion_mecanica"
+                                   {{ 'checked' if visita and visita.accion_mecanica else '' }}>
+                            <label class="form-check-label" for="accion_mecanica">
+                                31 - Acción Mecánica
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="tratamiento_focal" name="tratamiento_focal"
+                                   {{ 'checked' if visita and visita.tratamiento_focal else '' }}>
+                            <label class="form-check-label" for="tratamiento_focal">
+                                32 - Tratamiento Focal
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Otros Motivos de Visita -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">Otros Motivos de Visita</h5>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="egreso_internacion" name="egreso_internacion"
+                                   {{ 'checked' if visita and visita.egreso_internacion else '' }}>
+                            <label class="form-check-label" for="egreso_internacion">
+                                33 - Egreso de Internación
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="convite_actividades" name="convite_actividades"
+                                   {{ 'checked' if visita and visita.convite_actividades else '' }}>
+                            <label class="form-check-label" for="convite_actividades">
+                                34 - Convite para Actividades Colectivas/Campañas de Salud
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="orientacion_prevencion" name="orientacion_prevencion"
+                                   {{ 'checked' if visita and visita.orientacion_prevencion else '' }}>
+                            <label class="form-check-label" for="orientacion_prevencion">
+                                35 - Orientación/Prevención
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="otro_motivo" name="otro_motivo"
+                                   {{ 'checked' if visita and visita.otro_motivo else '' }}
+                                   onchange="document.getElementById('otro_motivo_div').style.display = this.checked ? 'block' : 'none'">
+                            <label class="form-check-label" for="otro_motivo">
+                                99 - Otros
+                            </label>
+                        </div>
+                        <div id="otro_motivo_div" class="mt-2" style="display: {{ 'block' if visita and visita.otro_motivo else 'none' }};">
+                            <input type="text" class="form-control" id="otro_motivo_especificar" name="otro_motivo_especificar"
+                                   value="{{ visita.otro_motivo_especificar if visita else '' }}"
+                                   placeholder="Especifique otro motivo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección 4: Evaluación -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">4. Evaluación</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="peso" class="form-label">Peso (kg)</label>
+                        <input type="number" class="form-control" id="peso" name="peso" step="0.1" min="0"
+                               value="{{ visita.peso if visita else '' }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="altura" class="form-label">Altura (cm)</label>
+                        <input type="number" class="form-control" id="altura" name="altura" min="0"
+                               value="{{ visita.altura if visita else '' }}">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="resultado_visita" class="form-label">Resultado *</label>
+                        <select class="form-select" id="resultado_visita" name="resultado_visita" required>
+                            <option value="">Seleccione...</option>
+                            <option value="01" {{ 'selected' if visita and visita.resultado_visita == '01' else '' }}>Realizada</option>
+                            <option value="02" {{ 'selected' if visita and visita.resultado_visita == '02' else '' }}>Recusada</option>
+                            <option value="03" {{ 'selected' if visita and visita.resultado_visita == '03' else '' }}>Ausente</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    {{ 'Guardar Cambios' if editar else 'Guardar Visita' }}
+                </button>
+                <a href="{{ url_for('listar_visitas_domiciliares') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Agregar jQuery y jQuery UI -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Obtener las microáreas del ACS
+    const microareas = {{ acs.microareas.split(',')|tojson }};
+    
+    $("#busqueda_ciudadano").autocomplete({
+        source: function(request, response) {
+            $.getJSON("/api/ciudadano/buscar", {
+                q: request.term
+            }, function(data) {
+                if (data.success) {
+                    // Filtrar solo los ciudadanos que pertenecen a las microáreas del ACS
+                    const resultadosFiltrados = data.resultados.filter(ciudadano => 
+                        microareas.includes(ciudadano.microarea)
+                    );
+                    
+                    response(resultadosFiltrados.map(function(item) {
+                        return {
+                            label: item.nombre_completo,
+                            value: item.nombre_completo,
+                            item: item
+                        };
+                    }));
+                }
+            });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            const ciudadano = ui.item.item;
+            seleccionarCiudadano(ciudadano);
+            return true;
+        }
+    }).data("ui-autocomplete")._renderItem = function(ul, item) {
+        return $("<li>")
+            .append(`<div class="ciudadano-item">
+                        <div class="ciudadano-nombre">${item.item.nombre_completo}</div>
+                        <div class="ciudadano-info">
+                            CNS/CPF: ${item.item.cns_cpf} | Microárea: ${item.item.microarea}
+                            <br>${item.item.domicilio}
+                        </div>
+                    </div>`)
+            .appendTo(ul);
+    };
+});
+
+function seleccionarCiudadano(ciudadano) {
+    document.getElementById('cns_ciudadano').value = ciudadano.cns_cpf;
+    document.getElementById('nombre_ciudadano').value = ciudadano.nombre_completo;
+    document.getElementById('domicilio').value = ciudadano.domicilio;
+    document.getElementById('fecha_nacimiento').value = ciudadano.fecha_nacimiento;
+    document.getElementById('sexo').value = ciudadano.sexo;
+    document.getElementById('sexo_display').value = ciudadano.sexo === 'M' ? 'Masculino' : 'Femenino';
+    document.getElementById('microarea').value = ciudadano.microarea;
+}
+
+// Validación del formulario
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+function mostrarOtroInmueble() {
+    const tipoInmueble = document.getElementById('tipo_inmueble');
+    const otroInmuebleDiv = document.getElementById('otro_inmueble_div');
+    otroInmuebleDiv.style.display = tipoInmueble.value === '99' ? 'block' : 'none';
+}
+</script>
+{% endblock %} 

@@ -1,0 +1,285 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Detalles del Cadastro Domiciliar</h1>
+        <div>
+            <a href="{{ url_for('editar_cadastro_domiciliar', id=cadastro.id) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a href="{{ url_for('listar_cadastros_domiciliares') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Volver
+            </a>
+        </div>
+    </div>
+
+    <!-- Sección 1: Identificación de la Unidad de Salud -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>1. Identificación de la Unidad de Salud</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <p><strong>CNES:</strong> {{ cadastro.cnes }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>INE:</strong> {{ cadastro.ine }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Microárea:</strong> {{ cadastro.microarea or 'Não especificada' }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Prontuario Familiar:</strong> {{ cadastro.prontuario_familiar or 'Não especificado' }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Fecha de Registro:</strong> {{ cadastro.fecha_registro.strftime('%d/%m/%Y') }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 2: Información del Domicilio -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>2. Información del Domicilio</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <p><strong>Dirección Completa:</strong> 
+                        {{ cadastro.tipo_logradouro }} {{ cadastro.nombre_logradouro }}, 
+                        {{ cadastro.numero }}
+                        {% if cadastro.complemento %}
+                            - {{ cadastro.complemento }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>Barrio:</strong> {{ cadastro.barrio }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Municipio:</strong> {{ cadastro.municipio }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p><strong>UF:</strong> {{ cadastro.uf }}</p>
+                </div>
+                <div class="col-md-2">
+                    <p><strong>CEP:</strong> {{ cadastro.cep }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 3: Contacto -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>3. Contacto</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Teléfono Residencial:</strong> {{ cadastro.telefono_residencial or 'Não especificado' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Teléfono de Referencia:</strong> {{ cadastro.telefono_referencia or 'Não especificado' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 4: Información sobre Animales -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>4. Información sobre Animales</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>¿Hay Animales?</strong> {{ 'Sim' if cadastro.tiene_animales else 'Não' }}</p>
+                    {% if cadastro.tiene_animales %}
+                        <p><strong>Cantidad de Animales:</strong> {{ cadastro.cantidad_animales }}</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {% if cadastro.tiene_animales %}
+                        <p><strong>Tipos de Animales:</strong></p>
+                        <ul class="list-unstyled">
+                            {% if cadastro.tipo_animal_gato %}<li><i class="bi bi-check-circle-fill text-success"></i> Gato</li>{% endif %}
+                            {% if cadastro.tipo_animal_perro %}<li><i class="bi bi-check-circle-fill text-success"></i> Perro</li>{% endif %}
+                            {% if cadastro.tipo_animal_pajaro %}<li><i class="bi bi-check-circle-fill text-success"></i> Pájaro</li>{% endif %}
+                            {% if cadastro.tipo_animal_cria %}<li><i class="bi bi-check-circle-fill text-success"></i> Animales de Cría</li>{% endif %}
+                            {% if cadastro.tipo_animal_otro %}
+                                <li><i class="bi bi-check-circle-fill text-success"></i> Otros: {{ cadastro.otro_animal_especificar }}</li>
+                            {% endif %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 5: Situación de Moradia -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>5. Situación de Moradia</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Tipo de Domicilio:</strong> 
+                        {% if cadastro.tipo_domicilio == 'Otro' %}
+                            {{ cadastro.otro_tipo_domicilio }}
+                        {% else %}
+                            {{ cadastro.tipo_domicilio }}
+                        {% endif %}
+                    </p>
+                    <p><strong>Número de Moradores:</strong> {{ cadastro.numero_moradores }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Número de Cômodos:</strong> {{ cadastro.numero_comodos }}</p>
+                    <p><strong>¿Tiene Energía Eléctrica?</strong> {{ 'Sim' if cadastro.energia_electrica else 'Não' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 6: Condición de Tenencia -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>6. Condición de Tenencia</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="list-unstyled">
+                        {% if cadastro.propietario %}<li><i class="bi bi-check-circle-fill text-success"></i> Propietario</li>{% endif %}
+                        {% if cadastro.comodatario %}<li><i class="bi bi-check-circle-fill text-success"></i> Comodatário(a)</li>{% endif %}
+                        {% if cadastro.beneficiario_banco_terra %}<li><i class="bi bi-check-circle-fill text-success"></i> Beneficiário(a) do Banco da Terra</li>{% endif %}
+                        {% if cadastro.parceiro_meeiro %}<li><i class="bi bi-check-circle-fill text-success"></i> Parceiro(a) / Meeiro(a)</li>{% endif %}
+                        {% if cadastro.assentado %}<li><i class="bi bi-check-circle-fill text-success"></i> Assentado(a)</li>{% endif %}
+                        {% if cadastro.posseiro %}<li><i class="bi bi-check-circle-fill text-success"></i> Posseiro</li>{% endif %}
+                        {% if cadastro.arrendatario %}<li><i class="bi bi-check-circle-fill text-success"></i> Arrendatário(a)</li>{% endif %}
+                        {% if cadastro.no_aplica %}<li><i class="bi bi-check-circle-fill text-success"></i> Não se aplica</li>{% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 7: Condiciones de Vivienda -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>7. Condiciones de Vivienda</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Material de las Paredes:</strong> 
+                        {% if cadastro.material_paredes == 'otro_material' %}
+                            {{ cadastro.otro_material_especificar }}
+                        {% else %}
+                            {{ cadastro.material_paredes }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Tipo de Acceso:</strong>
+                        {% if cadastro.tipo_acceso == 'otro_acceso' %}
+                            {{ cadastro.otro_acceso_especificar }}
+                        {% else %}
+                            {{ cadastro.tipo_acceso }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 8: Saneamiento y Condiciones del Agua -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>8. Saneamiento y Condiciones del Agua</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Destino de la Basura:</strong>
+                        {% if cadastro.destino_basura == 'otro_destino' %}
+                            {{ cadastro.otro_destino_especificar }}
+                        {% else %}
+                            {{ cadastro.destino_basura }}
+                        {% endif %}
+                    </p>
+                    <p><strong>Forma de Escoamento del Baño:</strong>
+                        {% if cadastro.escoamento_bano == 'otra_forma_escoamento' %}
+                            {{ cadastro.otra_forma_escoamento_especificar }}
+                        {% else %}
+                            {{ cadastro.escoamento_bano }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Tratamiento de Agua:</strong> {{ cadastro.tratamiento_agua }}</p>
+                    <p><strong>Abastecimiento de Agua:</strong>
+                        {% if cadastro.abastecimiento_agua == 'otra_fuente' %}
+                            {{ cadastro.otra_fuente_especificar }}
+                        {% else %}
+                            {{ cadastro.abastecimiento_agua }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 9: Información del Responsable Familiar -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>9. Información del Responsable Familiar</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>CNS del Responsable:</strong> {{ cadastro.cartao_sus_responsable }}</p>
+                    <p><strong>Fecha de Nacimiento:</strong> 
+                        {{ cadastro.fecha_nacimiento_responsable.strftime('%d/%m/%Y') if cadastro.fecha_nacimiento_responsable else 'Não especificada' }}
+                    </p>
+                    <p><strong>Residencia desde:</strong> {{ cadastro.residencia_desde or 'Não especificado' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>¿Mudanza Reciente?</strong> {{ 'Sim' if cadastro.mudanza_reciente else 'Não' }}</p>
+                    <p><strong>Renta Familiar:</strong> {{ cadastro.renta_familiar }} salarios mínimos</p>
+                    <p><strong>Número de Miembros:</strong> {{ cadastro.numero_miembros }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección 10: Datos del Profesional -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>10. Datos del Profesional de Salud</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>CNS del Profesional:</strong> {{ cadastro.cartao_sus_profesional }}</p>
+                    <p><strong>¿Confirmación del Registro?</strong> {{ 'Sim' if cadastro.confirmacion_registro else 'Não' }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Digitado por:</strong> {{ cadastro.digitado_por or 'Não especificado' }}</p>
+                    <p><strong>Fecha de Digitación:</strong> 
+                        {{ cadastro.fecha_digitacion.strftime('%d/%m/%Y') if cadastro.fecha_digitacion else 'Não especificada' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

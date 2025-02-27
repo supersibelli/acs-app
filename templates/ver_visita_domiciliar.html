@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Detalles de la Visita Domiciliar</h5>
+            <div>
+                <a href="{{ url_for('generar_pdf_visita', visit_id=visita.id) }}" class="btn btn-light">
+                    <i class="bi bi-file-earmark-pdf"></i> Generar PDF
+                </a>
+                <a href="{{ url_for('editar_visita_domiciliar', id=visita.id) }}" class="btn btn-light ms-2">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Datos Básicos -->
+            <h6 class="border-bottom pb-2 mb-3">Datos Básicos</h6>
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <p><strong>Fecha:</strong> {{ visita.fecha.strftime('%d/%m/%Y') }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Turno:</strong> {{ visita.turno }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Microárea:</strong> {{ visita.microarea }}</p>
+                </div>
+                <div class="col-md-3">
+                    <p><strong>Tipo de Inmueble:</strong>
+                        {% if visita.tipo_inmueble == '01' %}
+                            Domicilio
+                        {% elif visita.tipo_inmueble == '02' %}
+                            Comercio
+                        {% elif visita.tipo_inmueble == '03' %}
+                            Terreno Baldío
+                        {% elif visita.tipo_inmueble == '04' %}
+                            Ponto Estratégico
+                        {% elif visita.tipo_inmueble == '05' %}
+                            Escuela
+                        {% elif visita.tipo_inmueble == '06' %}
+                            Guardería
+                        {% elif visita.tipo_inmueble == '07' %}
+                            Abrigo
+                        {% elif visita.tipo_inmueble == '08' %}
+                            Institución para ancianos
+                        {% elif visita.tipo_inmueble == '09' %}
+                            Unidad Prisional
+                        {% elif visita.tipo_inmueble == '10' %}
+                            Unidad Socioeducativa
+                        {% elif visita.tipo_inmueble == '11' %}
+                            Delegacia
+                        {% elif visita.tipo_inmueble == '12' %}
+                            Establecimiento Religioso
+                        {% else %}
+                            {{ visita.tipo_inmueble_otro }}
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Datos del Ciudadano -->
+            <h6 class="border-bottom pb-2 mb-3">Datos del Ciudadano</h6>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <p><strong>Número de Prontuário:</strong> {{ visita.numero_prontuario or 'No especificado' }}</p>
+                    <p><strong>CNS del Ciudadano:</strong> {{ visita.cns_ciudadano or 'No especificado' }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Nombre:</strong> {{ ciudadano.nombre }} {{ ciudadano.apellidos }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Fecha de Nacimiento:</strong> {{ ciudadano.fecha_nacimiento.strftime('%d/%m/%Y') }}</p>
+                </div>
+            </div>
+
+            <!-- Motivos de la Visita -->
+            <h6 class="border-bottom pb-2 mb-3">Motivos de la Visita</h6>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" disabled {{ 'checked' if visita.cadastramento_atualizacao }}>
+                        <label class="form-check-label">Cadastramento/Actualización</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" disabled {{ 'checked' if visita.visita_periodica }}>
+                        <label class="form-check-label">Visita Periódica</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" disabled {{ 'checked' if visita.busca_ativa }}>
+                        <label class="form-check-label">Busca Activa</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resultado -->
+            <h6 class="border-bottom pb-2 mb-3">Resultado de la Visita</h6>
+            <div class="row mb-4">
+                <div class="col-12">
+                    <p>{{ visita.resultado }}</p>
+                </div>
+            </div>
+
+            <!-- Datos del Profesional -->
+            <h6 class="border-bottom pb-2 mb-3">Datos del Profesional</h6>
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong>CNS:</strong> {{ acs.cns }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Nombre:</strong> {{ acs.nombre }} {{ acs.apellidos }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong>Microárea:</strong> {{ acs.microarea }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

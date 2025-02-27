@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block breadcrumbs %}
+{% if acs_actual %}
+<li class="breadcrumb-item active">
+    <i class="bi bi-person-check-fill text-success"></i>
+    {{ acs_actual.nombre }}
+</li>
+{% else %}
+<li class="breadcrumb-item active">Início</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if acs_actual %}
+<!-- Barra de estado del ACS -->
+<div class="alert alert-success d-flex align-items-center justify-content-between mb-4 py-2">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-person-check-fill fs-5 me-2"></i>
+        <div>
+            <strong>{{ acs_actual.nombre }}</strong>
+            <small class="text-muted ms-2">{{ acs_actual.unidade_saude }}</small>
+        </div>
+    </div>
+    <a href="{{ url_for('editar_acs', id=acs_actual.id) }}" class="btn btn-sm btn-outline-success">
+        <i class="bi bi-pencil"></i>
+        <span class="d-none d-sm-inline">Editar</span>
+    </a>
+</div>
+{% endif %}
+
+<!-- Selección de ACS solo si no hay ninguno seleccionado o hay más de uno -->
+{% if not acs_actual or acs_list|length > 1 %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person-badge me-2"></i>
+                        Selecione o ACS
+                    </h5>
+                    <a href="{{ url_for('registrar_acs') }}" class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="Registrar novo ACS">
+                        <i class="bi bi-person-plus"></i>
+                        <span class="d-none d-sm-inline">Novo ACS</span>
+                    </a>
+                </div>
+                <form method="POST" action="{{ url_for('seleccionar_acs') }}" class="row g-3">
+                    <div class="col-md-8 col-lg-6">
+                        <select class="form-select" id="acs_id" name="acs_id" required>
+                            <option value="">Escolha um ACS...</option>
+                            {% for acs in acs_list %}
+                                <option value="{{ acs.id }}" {% if acs.id == acs_actual_id %}selected{% endif %}>
+                                    {{ acs.nombre }} - {{ acs.unidade_saude }} (Microáreas: {{ acs.microareas }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4 col-lg-2">
+                        <button type="submit" class="btn btn-primary w-100" data-bs-toggle="tooltip" title="Confirmar seleção de ACS">
+                            <i class="bi bi-check-lg"></i>
+                            <span class="d-none d-sm-inline">Selecionar</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Hero Section -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="p-4 text-center bg-body-tertiary rounded-3">
+            {% if acs_actual %}
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h1 class="display-6 fw-bold mb-0">
+                    <i class="bi bi-heart-pulse text-primary me-2"></i>
+                    Sistema do ACS
+                </h1>
+                <a href="{{ url_for('editar_acs', id=acs_actual.id) }}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-pencil"></i>
+                    <span class="d-none d-sm-inline">Editar</span>
+                </a>
+            </div>
+            <div class="alert alert-info d-inline-block mb-3">
+                <h5 class="mb-1">
+                    <i class="bi bi-person-badge me-2"></i>
+                    {{ acs_actual.nombre }}
+                </h5>
+                <small class="text-muted">
+                    {{ acs_actual.unidade_saude }}
+                    <br>
+                    <i class="bi bi-geo-alt me-1"></i>Microáreas: {{ acs_actual.microareas }}
+                </small>
+            </div>
+            {% else %}
+            <h1 class="display-6 fw-bold mb-4">
+                <i class="bi bi-heart-pulse text-primary me-2"></i>
+                Sistema do ACS
+            </h1>
+            {% endif %}
+            <p class="lead mb-4">Sistema integrado de gestão para Agentes Comunitários de Saúde</p>
+        </div>
+    </div>
+</div>
+
+{% if acs_actual %}
+<!-- Cards Section -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4 mb-4">
+    <!-- Cadastro Individual Card -->
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm hover-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-primary bg-gradient text-white mb-3 p-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                    <i class="bi bi-person-plus fs-3"></i>
+                </div>
+                <h5 class="card-title">Cadastro Individual</h5>
+                <p class="card-text text-muted">Gerenciar registros individuais dos cidadãos da sua área</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('cadastro', acs_id=acs_actual.id) }}" class="btn btn-primary" data-bs-toggle="tooltip" title="Criar novo cadastro individual">
+                        <i class="bi bi-person-plus"></i>
+                        <span class="d-none d-sm-inline">Novo Cadastro</span>
+                    </a>
+                    <a href="{{ url_for('listar_cadastros', acs_id=acs_actual.id) }}" class="btn btn-outline-primary" data-bs-toggle="tooltip" title="Ver lista de cadastros">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-sm-inline">Listar Cadastros</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cadastro Domiciliar Card -->
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm hover-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-success bg-gradient text-white mb-3 p-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                    <i class="bi bi-house-fill fs-3"></i>
+                </div>
+                <h5 class="card-title">Cadastro Domiciliar</h5>
+                <p class="card-text text-muted">Gerenciar informações das residências e famílias</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('cadastro_domiciliar', acs_id=acs_actual.id) }}" class="btn btn-success" data-bs-toggle="tooltip" title="Criar novo cadastro domiciliar">
+                        <i class="bi bi-house-fill"></i>
+                        <span class="d-none d-sm-inline">Novo Cadastro</span>
+                    </a>
+                    <a href="{{ url_for('listar_cadastros_domiciliares', acs_id=acs_actual.id) }}" class="btn btn-outline-success" data-bs-toggle="tooltip" title="Ver lista de cadastros domiciliares">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-sm-inline">Listar Cadastros</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Visitas Domiciliares Card -->
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm hover-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-info bg-gradient text-white mb-3 p-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                    <i class="bi bi-clipboard-plus fs-3"></i>
+                </div>
+                <h5 class="card-title">Visitas Domiciliares</h5>
+                <p class="card-text text-muted">Registrar e acompanhar as visitas realizadas</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('visita_domiciliar', acs_id=acs_actual.id) }}" class="btn btn-info text-white" data-bs-toggle="tooltip" title="Registrar nova visita">
+                        <i class="bi bi-clipboard-plus"></i>
+                        <span class="d-none d-sm-inline">Nova Visita</span>
+                    </a>
+                    <a href="{{ url_for('listar_visitas_domiciliares', acs_id=acs_actual.id) }}" class="btn btn-outline-info" data-bs-toggle="tooltip" title="Ver lista de visitas">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-sm-inline">Listar Visitas</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Atividades Coletivas Card -->
+    <div class="col">
+        <div class="card h-100 border-0 shadow-sm hover-card">
+            <div class="card-body text-center p-4">
+                <div class="feature-icon bg-warning bg-gradient text-white mb-3 p-3 rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                    <i class="bi bi-people-fill fs-3"></i>
+                </div>
+                <h5 class="card-title">Atividades Coletivas</h5>
+                <p class="card-text text-muted">Gerenciar atividades e eventos com a comunidade</p>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('actividad_colectiva', acs_id=acs_actual.id) }}" class="btn btn-warning text-white" data-bs-toggle="tooltip" title="Registrar nova atividade">
+                        <i class="bi bi-people-fill"></i>
+                        <span class="d-none d-sm-inline">Nova Atividade</span>
+                    </a>
+                    <a href="{{ url_for('listar_actividades_colectivas', acs_id=acs_actual.id) }}" class="btn btn-outline-warning" data-bs-toggle="tooltip" title="Ver lista de atividades">
+                        <i class="bi bi-search"></i>
+                        <span class="d-none d-sm-inline">Listar Atividades</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+
+.feature-icon {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-card:hover .feature-icon {
+    transform: scale(1.1);
+}
+
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .feature-icon {
+        width: 48px !important;
+        height: 48px !important;
+    }
+    
+    .feature-icon i {
+        font-size: 1.5rem !important;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .card-text {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        min-height: 44px;
+        padding: 12px;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .btn i {
+        font-size: 20px;
+        margin-right: 8px;
+    }
+
+    /* Espaciado entre botones */
+    .d-grid {
+        gap: 8px;
+    }
+}
+</style>
+{% endif %}
+{% endblock %} 
