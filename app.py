@@ -5,14 +5,23 @@ from datetime import datetime
 from sqlalchemy import or_
 from utils.report_generator import ReportGenerator
 import os
+import json
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cadastro.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SESSION_TYPE'] = 'filesystem'
 
+# Configuración de la base de datos
+if os.environ.get('RENDER'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///instance/cadastro.db'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///cadastro.db'
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
+
+# Configuración de la sesión
+app.config['SESSION_TYPE'] = 'filesystem'
 Session(app)
+
 db = SQLAlchemy(app)
 
 # Crear directorio para informes si no existe
@@ -1066,6 +1075,5 @@ def generar_estadisticas():
     return render_template('generar_informe.html')
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(host='0.0.0.0', port=5000, debug=True) 
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port) 
